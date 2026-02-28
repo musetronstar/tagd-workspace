@@ -1,0 +1,4 @@
+# ignore symlink targets' git dirs
+tagd/.git
+tagd-dictionary/.git
+
