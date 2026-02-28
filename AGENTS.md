@@ -42,3 +42,11 @@ When uncertain, choose the simpler structure.
 - Keep definitions consistent with existing examples
 - Do not delete existing valid entries without instruction
 
+---
+
+## Practical Rules
+
+- Keep each VOA sense separate unless the source wording clearly supports a semantic parent-child relation between senses.
+- Prefer the shallowest TAGL rendering that stays close to the VOA wording; do not replace vague source terms like `something` with a more specific parent like `event` unless required.
+- Define prerequisite tags and relators before using them in a statement; TAGL requires valid subject-relator-object structure, not bare English fragments.
+- Validate edited `.tagl` files with `tagsh -f <file> -n` after changes.
