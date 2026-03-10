@@ -16,7 +16,8 @@ The goal is to represent the VOA Wordbook as a TAGL tagspace.
 3. Avoid inventing new high-level ontology unless necessary.
 4. Use minimal hyponymy.
 5. If inference beyond the VOA definition is required:
-   - Add a `# TODO` comment explaining the assumption.
+   - In `.tagl`, add an inline `-- reasonable induction` comment on the inferred statement.
+   - TODO comments are added by human, do not add unless instructed. Do not modify existing `-- TODO`
 6. Do not refactor or modify the `tagd` library unless explicitly instructed.
 7. Work inside `tagd-dictionary` unless library inspection is needed.
 
@@ -69,6 +70,7 @@ When uncertain, choose the simpler structure.
 - Prefer the shallowest TAGL rendering that stays close to the VOA wording; do not replace vague source terms like `something` with a more specific parent like `event` unless required.
 - Define prerequisite tags and relators before using them in a statement; TAGL requires valid subject-relator-object structure, not bare English fragments.
 - Sparse subordinate definitions taken directly from the VOA wording are acceptable when they preserve the source semantics and avoid unnecessary invented ontology.
+- If a statement is not direct VOA wording or an exact normalization of recurring VOA wording, but is still a justified prerequisite or abstraction, mark that statement inline with `-- reasonable induction`.
 - Prefer object relations over modifiers: when information can be represented as a meaningful subject-relator-object statement, model it as an object relation instead of a modifier assignment. Use modifiers mainly for scalar/literal metadata where no useful object node or relation is intended.
 - When defining a namespaced or URI-style tag id with `:`, use the superordinate tag as the prefix and the word as the suffix, for example `event:accident` or `place:across`.
 - Do not add predicates that are not present in the VOA definition unless TAGL requires a fallback.
