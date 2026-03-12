@@ -127,6 +127,10 @@ When uncertain, choose the simpler structure.
   prioritize finding meaningful subordinate relations (hyponym, or identity relations) as most important and taglize into `sub_relator`
   then taglize the following predicate relations.
 * Treat `tagr` output as a candidate shape, not final truth. Repair it using the file context, existing tags, and the rules in this workspace.
+* When a meaningful `tagr` failure or weak translation reveals a new pattern or regression, recommend adding a corpus-backed regression test and, when appropriate, a focused unit test before changing `tagr`. Name the target file in the recommendation:
+  - focused unit tests in `tagr/test_tagr.py`
+  - corpus cases in `tagr/corpus/cases.yaml` once that corpus exists
+  - corpus runner assertions in `tagr/test_corpus.py` once that runner exists
 * Do not define a sub relation (`>> {relator} {sub_relation} _rel`) for a VOA word just because it is classified
   as adjective, adverb or preposition. The `_rel` is only appropriate as a fallback when the word
   functions primarily as a `relator` when no more specific semantic `super_object` available (e.g. `before`, `in`, `for`).
