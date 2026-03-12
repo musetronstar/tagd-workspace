@@ -84,27 +84,59 @@ When uncertain, choose the simpler structure.
 * Work inside `tagd-simple-english/` unless library inspection is needed and asked for / verified.
 * Keep definitions consistent with existing examples
 * Do not delete existing valid entries without instruction
-* Add prerequisite subordinate statements inline as needed while working from top to bottom; avoid unnecessary reordering of generated TAGL beyond what is needed to satisfy dependencies and consistency.
+* Add prerequisite subordinate statements inline as needed while working from top to bottom; They should be defined above definitions requiring them as prerequite to work. (this is analogous to "forward declared" class names in C++.
+  However, the commented generated VOA definitions do not contain sub relations; that can be either
+  1) added in the TAGLized put statement for the VOA definition block
+  2) or, defined where need as a prerequite so the TAGLized put statement will not contain the `sub_relator` identity relation
+
+  Example:
+    ```tagl
+    -- increase forward declared
+    >> increase _sub act;
+
+    -- several lines later, `increase` is required as an `object`
+    >> show:advertise _sub show
+    has product, quality
+    to increase, sales
+    identified_as "VOA:advertise:0"
+    represents word = "advertise"
+    categorized_as verb
+    has definition = "to show or present the qualities of a product to increase sales"
+
+    -- TAGLized VOA definition
+    >> increase
+    to_make more
+    in size, ammount
+    identified_as "VOA:increase:0"
+    represents word = "increase"
+    categorized_as verb
+    has definition = "to make more in size or amount"
+  ```
 * Define **next word** strictly as the first remaining commented TAGL put operator `-->>` selected with:
   `grep -A4 -w '\-\->>' simple-english.tagl | head -n 5`
 - "Process a word" means follow the **Workfown Instructions** iterative loop for one word only.
 
 ## Practical Rules
 
-- Keep each VOA sense separate unless the source wording clearly supports a semantic parent-child relation between senses.
-- TAGL rendering should follow the VOA wording;
+* Keep each VOA sense separate unless the source wording clearly supports a semantic parent-child relation between senses.
+* TAGL rendering should follow the VOA wording;
   prioritize finding meaningful subordinate relations (hyponym, or identity relations) as most important and taglize into `sub_relator`
   then taglize the following predicate relations.
-- Define prerequisite tags before using them in a statement; TAGL requires valid subject-relator-object structure, not bare English fragments.
-- Sparse subordinate definitions taken directly from the VOA gloss are acceptable when they preserve the source semantics and avoid unnecessary invented ontology.
-- If a statement is not direct VOA wording or an exact normalization of recurring VOA wording, but is still a justified prerequisite or abstraction, mark that statement inline with `-- reasonable induction`.
-- Prefer TAGL `object` relations over modifiers `<object> = <modifier`: when information can be represented as a meaningful subject-relator-object statement, model it as an object relation instead of a modifier assignment. Then it becomes a tag in the tree rather than just a "data property" Use modifiers mainly for scalar/literal metadata (quantities, strings) where no useful object node or relation is known or intended.
-- In TAGLized VOA definitions, do not use hard tags directly when a VOA word can serve the same function. First derive the VOA word from the hard tag, for example `>> has _sub _has;`, then use the VOA word in subsequent definition statements.
-- When defining a namespaced or URI-style tag id with `:`, use the superordinate tag as the prefix and the word as the suffix, for example `event:accident` or `place:across`.
-- Do not add predicates that are not present in the VOA definition unless TAGL requires a fallback.
-- If a more specific subordinate relation is not part of the VOA definition, use `_sub`.
-- If a more specific predicate relation is not part of the VOA definition, use `_rel`.
-- Validate edited `.tagl` files with `tagsh -f <file> -n` after changes.
+* Define prerequisite tags before using them in a statement; TAGL requires valid subject-relator-object structure, not bare English fragments.
+* Sparse subordinate definitions taken directly from the VOA gloss are acceptable when they preserve the source semantics and avoid unnecessary invented ontology.
+* If a statement is not direct VOA wording or an exact normalization of recurring VOA wording, but is still a justified prerequisite or abstraction, mark that statement inline with `-- reasonable induction`.
+* Prefer TAGL `object` relations over modifiers `<object> = <modifier`: when information can be represented as a meaningful subject-relator-object statement, model it as an object relation instead of a modifier assignment. Then it becomes a tag in the tree rather than just a "data property" Use modifiers mainly for scalar/literal metadata (quantities, strings) where no useful object node or relation is known or intended.
+* In TAGLized VOA definitions
+  - do not use hard tags directly when a VOA word can serve the tagd POS type.
+  - first derive the VOA word from the hard tag, for example `>> has _sub _has;`, then use the VOA word in subsequent definition statements.
+  - single line TAGL statements should not be preceed or succeeded by an empty newline.
+  - multiline TAGL statements must be preceed and succeeded by an empty newline.
+  - do not cut the multiline TAGLized VOA definition and insert in another location of the file; the VOA definitions were generated alphabetically - preserve that order
+* When defining a namespaced or URI-style tag id with `:`, use the superordinate tag as the prefix and the word as the suffix, for example `event:accident` or `place:across`.
+* Do not add predicates that are not present in the VOA definition unless TAGL requires a fallback.
+* If a more specific subordinate relation is not part of the VOA definition, use `_sub`.
+* If a more specific predicate relation is not part of the VOA definition, use `_rel`.
+* Validate edited `.tagl` files with `tagsh -f <file> -n` after changes.
 
 ## Workflow Instructions
 
@@ -118,8 +150,8 @@ While the **next word** is found:
        [<relator> <object_list>]
     ```
   3) Test:
-     TAGL validation:
-    `$HOME/projects/tagd/tagsh/bin/tagsh -f simple-english.tagl -n`
+     **TAGL validation**:
+    `../tagd/tagsh/bin/tagsh -f simple-english.tagl -n`
   4) If validation fails, fix the reported issue(s) and repeat step 3 until validation succeeds.
   5) If the required tag corresponding to a VOA word cannot be directly match to a TAGL `tagd_pos:` type word, stop before forcing a hard tag into the definition and make recommendations to the user.
   6) Stop after validation succeeds for that one word; do not process additional words unless explicitly asked.
@@ -127,8 +159,7 @@ While the **next word** is found:
 
 - "Process the next N words" means batch mode with the same validation loop:
   1) Repeat the single-word loop N times in top-to-bottom order.
-  2) After each word translation, run
-    `$HOME/projects/tagd/tagsh/bin/tagsh -f voa-simple-english.tagl -n`
+  2) After each word translation, run **TAGL validations**.
     and fix issues until it succeeds before moving to the next word.
   3) Continue automatically until all N words are successfully processed.
   4) Then show one combined diff containing the successful changes for those N words.
