@@ -1,6 +1,7 @@
 # ignore symlink targets
 tagd
-tagd-dictionary
+tagd-simple-english
+tagr
 
 # tmp file
 *.swp
