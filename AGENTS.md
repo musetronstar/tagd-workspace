@@ -143,7 +143,10 @@ When uncertain, choose the simpler structure.
 While the **next word** is found:
   1) uncomment the **next word** block
   2) expand the TAGL definition with as:
+    either:
     one and only one sub relation (identity relation)
+    or:
+    zero sub relations in the TAGLized VOA definition block when the required subordinate statement was already defined earlier as a prerequisite for that same word
     zero or more prodicate relations 
     ```tagd-grammar
     >> <subject> <sub_relator> <object>
@@ -168,5 +171,4 @@ While the **next word** is found:
   do not continue to additional ids unless explicitly asked.
 
 ---
-
 
