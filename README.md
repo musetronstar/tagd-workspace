@@ -3,7 +3,7 @@
 This repository orchestrates AI-assisted translation of natural language to TAGL.
 
 ## Goal
-The goal is to represent a Simple English dicionary as linked data in a browsable tagspace served by an httagd web app.
+The goal is to represent a Simple English dictionary as linked data in a browsable tagspace served by an httagd web app.
 
 Start with translating the VOA Wordbook dictionary into TAGL.
 

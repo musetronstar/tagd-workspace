@@ -1,33 +1,51 @@
 # tagd Agent Workspace
 
 ## Symlinks
-
 This workspace contains symlinks to these repositories:
 * `tagd/` tagd semantic-relational database and TAGL languge
 * `tagd-simple-english/` VOA Wordbook Simple English dictionary to be translated into TAGL and httagd web app
 * `tagr/` natural language to TAGL translator
 
-## TAGL
-
-Understand the TAGL language in `TAGL-README.md`
-
-## Definitions
-
-tagspace: a tagd semantic-relational database using TAGL
-TAGLize: to translate (or tranform) input into TAGL
-
 ## Goals
 
-TAGLize various forms of input and construct meaninful tagspaces.
+Tranform (TAGLize) the **commented TAGL entries** in `simple-english.tagl`
+into TAGL **PUT** statements containing the semantic relations of the VOA defintion.
+Use `tagr` as the first-pass structural translator for the VOA word + gloss,
+then use `tagsh` validation plus repository rules to repair and complete the
+candidate TAGL in `simple-english.tagl`.
 
-## Tasks
+### PUT Grammar
 
-Task `.md` files are stored in `TASKS.md`
+`tagd/README.md` contains BNF grammar examples for TAGL statements:
 
-Tasks Prioritized:
+```
+put_statement ::= ">>" subject_sub_relation relations
+put_statement ::= ">>" subject_sub_relation
+put_statement ::= ">>" subject relations
 
-1. simple-english: transform the VOA English Wordbook into a tagspace and build a tagd Web app to use it
-  + `TASKS.d/2026-03-19-08:33-simple-english-task.md`
+subject_sub_relation ::= subject SUB TAG
+
+subject ::= TAG
+
+relations ::= relations predicate_list
+relations ::= predicate_list
+
+predicate_list ::= relator object_list
+
+relator ::= TAG
+
+object_list ::= object_list ',' object
+object_list ::= object
+
+object ::= TAG EQUALS QUANTIFIER
+object ::= TAG EQUALS MODIFIER
+object ::= TAG EQUALS QUOTED_STR
+object ::= TAG
+```
+
+However, prioritize the canonical productions, terminals, and parser terminology are defined in
+`tagd/tagl/src/parser.y` and warn the user if it diverges from what is in `tagd/README.md`
+
 
 ## TAGL Generation Philosophy
 

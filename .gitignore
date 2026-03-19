@@ -7,6 +7,9 @@ tagr
 *.swp
 *~
 
+# __dunder file
+__*
+
 # hidden files
 .*
 
