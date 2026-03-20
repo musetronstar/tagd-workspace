@@ -54,20 +54,36 @@ A good Coding Agent prompt contains exactly five things:
 [One paragraph. What change is wanted.]
 
 ## Scope
-- files the agent may change
-- files the agent must not touch
+* files the agent may change
+* files the agent must not touch
 
 ## Constraints
-- preserve behavior
-- keep diff small and reviewable
-- no new dependencies
-- follow AGENTS.md
-- update tests as needed
+* preserve behavior
+* keep diff small and reviewable
+* no new dependencies
+* follow AGENTS.md
+* follow interruptions introduced by user
+  + comments or deleted code become design imperatives or contracts
+  - do not fix broken code by reverse breaking changes introduced by user
+  + do fix broken code by TDD (design by contract):
+    1) write test according to new suggested change to design or behavior
+    2) redesign/refactor around new tests and breaking changes
+    3) pass tests according to new design/behaviour
+* update tests as needed
+
+
+### Interruptions by User
+  + user comments or deleted code become design imperatives or contracts
+  - do not fix broken code by reverse breaking changes introduced by user
+  + do fix broken code by TDD (design by contract):
+    1) write test according to new suggested change to design or behavior
+    2) redesign/refactor around new tests and breaking changes
+    3) pass tests according to new design/behaviour
 
 ## Acceptance criteria
-- [boundary condition]
-- [behavior condition]
-- [tests pass]
+* boundary condition
+* behavior condition
+* tests pass
 
 ## Deliverables
 1. concise summary of changes

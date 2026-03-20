@@ -6,6 +6,10 @@
 
 [files which can be changed]
 
+## Doctrine
+
+Follow `docs/ai-assisted-dev-doctrine.md`
+
 ## Constraints
 
 * preserve behavior
