@@ -1,5 +1,6 @@
 # ignore symlink targets
 tagd
+tagd-nlp
 tagd-simple-english
 tagr
 

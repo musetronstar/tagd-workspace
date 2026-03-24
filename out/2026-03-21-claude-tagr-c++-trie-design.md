@@ -185,3 +185,12 @@ positions where the token was seen and the TAGL scanner token type resolved via
 * Small pure functions, deterministic translation, composable pipeline
 * Preserve the author's style — minimal diffs, no unnecessary reformatting
 * TDD: write test, implement, pass, report
+
+## Maxim
+
+All that tagr does is,
+Bytes in -> TAGL out:
+* STDIN - bytes
+* STOUT - correct TAGL, comments 
+* STDERR - TAGL errors, logged events (default, but syslog style facilities later)
+
