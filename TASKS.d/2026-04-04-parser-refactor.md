@@ -15,6 +15,15 @@ We must fix bugs:
 But before fixing the bugs, we should refactor, consolodate and simplifly. Sometimes bugs just go away after a refactor.
 
 During this refactor I want to **slice-and-dice** the current parser so that it is simplified and lean ane mean.
+
+Claude helped assess Codex's performance. Take this report into consideration:
+* `out/2026-04-04-codex-assessment.md`
+
+
+### Task 1
+* slice and dice `parser.y` to reduce and simplify 
+
+### Task 2
 * `TASKS.d/2026-04-04-parser-refactor.md`
 
 ## Scope
