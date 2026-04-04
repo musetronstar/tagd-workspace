@@ -19,6 +19,46 @@ During this refactor I want to **slice-and-dice** the current parser so that it 
 Claude helped assess Codex's performance. Take this report into consideration:
 * `out/2026-04-04-codex-assessment.md`
 
+## Lessons & Implications
+
+The TAGL parser is currently using Lemon in a rough, overly broad ownership
+style:
+
+* `%token_type {std::string *}` is used broadly
+* `%default_destructor { DELETE($$) }` is used broadly
+* many nonterminals are really control-flow helpers with side effects on
+  `tagl->tag_ptr()` rather than true semantic values
+* manual `DELETE` / `MDELETE` calls are mixed with Lemon-owned destruction
+
+This is not using Lemon effectively.
+
+Use SQLite's Lemon grammar as a model for implementation:
+
+* `/home/inc/src/sqlite-src-3510300/src/parse.y`
+
+What SQLite does better:
+
+* explicit `%type`s for many nonterminals
+* explicit `%destructor`s for owning semantic values
+* simple value types for helper symbols (`int`, `Token`, pointers to concrete
+  AST nodes, etc.)
+* explicit overwrite/transfer patterns (`/*A-overwrites-X*/`)
+* grammar actions that assign LHS semantic values intentionally instead of
+  relying on broad default pointer ownership
+
+Implications for TAGL refactor:
+
+1. shrink the use of `%default_destructor`
+2. define explicit semantic types for helper nonterminals where possible
+3. give side-effect-only helper nonterminals non-owning semantics
+4. reserve explicit destructors for symbols that truly own heap values
+5. remove `DELETE` / `MDELETE` only after ownership is made explicit enough for
+   Lemon to clean up correctly
+
+If TAGL semantic types are unclear, stop and ask for clarification rather than
+guessing. The goal is to make the TAGL parser use Lemon effectively, not to
+preserve an accidental ownership model.
+
 
 ### Task 1
 * slice and dice `parser.y` to reduce and simplify 
@@ -84,4 +124,3 @@ Follow `docs/ai-assisted-dev-doctrine.md`
 1. summary of changes
 2. test results
 3. open issues, concerns or interesting observations
-
