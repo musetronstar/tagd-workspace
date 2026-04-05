@@ -145,6 +145,16 @@ concise git commit message.
 
 ---
 
+## Comments
+
+Prefer self-documenting code over explanatory prose;
+
+But use a short comment for non-obvious names, algorithms, structures, etc. that are impactful to the design or behaviour of the system.
+
+The comment should align the reader to the **intent**, not restate the syntax.
+
+---
+
 ## Mission Types
 
 For most work, a prompt should name one of these:
