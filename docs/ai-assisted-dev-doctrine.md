@@ -93,6 +93,14 @@ A good Coding Agent prompt contains exactly five things:
 
 That is usually enough.
 
+For refactor prompts, state the ownership boundary early.
+
+When behavior spans modules, define:
+
+* what moves
+* what stays
+* which boundary the tests should prove
+
 ---
 
 ## What to Avoid
@@ -120,6 +128,10 @@ That is usually enough.
 
 One mission per step. No all-in-one redesign prompts unless a full redesign is the intent.
 
+If a task is fundamentally about design, analysis, or documentation, do not
+force it into a refactor template. Use a documentation/design task shape
+instead of mixing planning and implementation concerns into one template.
+
 When a task explicitly requires TDD sequencing, state the order:
 
 1. unit or in-process integration tests first
@@ -138,6 +150,8 @@ Mark aggregate make targets like `all`, `tests`, and `clean` as `.PHONY`.
 Implement the specified external contract directly.
 Do not preserve wrong internal formats and compensate for them in downstream code or tests.
 
+Write tests at the ownership boundary where the behavior truly belongs.
+
 ## Reporting
 
 When a task or user prompt changes one or more files, conclude the report with a suggested
@@ -152,6 +166,29 @@ Prefer self-documenting code over explanatory prose;
 But use a short comment for non-obvious names, algorithms, structures, etc. that are impactful to the design or behaviour of the system.
 
 The comment should align the reader to the **intent**, not restate the syntax.
+
+## TODO Hygiene
+
+TODOs should be one of:
+
+* real deferred work
+* historical note preserving design intent
+* stale and removable
+
+At task closeout:
+
+* remove TODOs that are already implemented
+* classify remaining work as deferred, superseded, or incomplete rather than
+  treating all open items as the same kind of issue
+
+## Reports and Promotion
+
+Use `out/` as working memory for reports, status notes, and temporary analysis.
+
+If a report contains durable process guidance:
+
+* propose promoting it into `docs/*` or a task template
+* do not leave long-term doctrine only in `out/`
 
 ---
 
