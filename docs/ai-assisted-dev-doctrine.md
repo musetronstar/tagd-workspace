@@ -145,6 +145,9 @@ full required suite, not just build artifacts.
 Prefer repo-owned local fixtures for normal tests over external mutable data
 files. Use external files only for explicit integration coverage.
 
+When a test must create a temporary external resource, keep cleanup explicit
+and robust so failed assertions do not leave avoidable residue behind.
+
 Mark aggregate make targets like `all`, `tests`, and `clean` as `.PHONY`.
 
 Implement the specified external contract directly.
@@ -166,6 +169,10 @@ Prefer self-documenting code over explanatory prose;
 But use a short comment for non-obvious names, algorithms, structures, etc. that are impactful to the design or behaviour of the system.
 
 The comment should align the reader to the **intent**, not restate the syntax.
+
+When removing placeholder, emotional, or low-signal comments from workaround
+code, replace them with a short intent comment if the remaining behavior is not
+obvious to the next reader.
 
 ## TODO Hygiene
 
