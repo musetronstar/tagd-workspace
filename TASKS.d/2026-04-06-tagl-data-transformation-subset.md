@@ -1,6 +1,6 @@
 # Task
 
-Define the minimal TAGL data-transformation subset needed to express a
+Define the minimal TAGL language development subset needed to express a
 CSV/TSV-to-TAGL ingestion pipeline as a TAGL program.
 
 ## Scope
@@ -8,18 +8,20 @@ CSV/TSV-to-TAGL ingestion pipeline as a TAGL program.
 Documents which can be changed:
 
 * `docs/tagl/README.md`
+* `docs/tagl/AGENTS.md`
 * `docs/tagl/TAGL-Thesis.md`
 * `docs/tagl/TAGL-spec.md`
 * `out/`
 
 Read for reference:
 
+* `~/projects/tagd`
+* `~/projects/tagr`
 * `~/projects/tagd-simple-english`
 * `~/projects/tagd-nlp`
 * existing TAGL grammar and parser documents when needed for contrast
 
-This is a design/documentation task. Do not change code in `tagd/`, `tagr/`,
-or `tagd-simple-english/` during this task.
+This is a design/documentation task. Do not change code in reference repositories during this task.
 
 ## Purpose
 
