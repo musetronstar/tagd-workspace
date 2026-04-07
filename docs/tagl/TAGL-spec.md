@@ -1,5 +1,4 @@
 # TAGL Specification
-## TAGL-spec.md (Draft v0.4)
 
 ## 1. Introduction
 
@@ -20,7 +19,7 @@ This specification defines:
 * grammar (syntax)
 * semantic model
 * evaluation rules
-* statement types
+* statements
 
 ### 1.3 Non-Goals
 
@@ -72,18 +71,26 @@ A tagspace is a hierarchical structure defined by subordinate relations.
 A tag’s identity is defined by a sub relation.
 
 ```tagl
->> dog _is_a mammal;
+>> dog _is_a mammal
 ```
 
 Rules:
+
 * A subject MUST have a sub relation to exist in the tagspace
 * The object of a sub relation MUST exist
+* A subject MUST have a subordinate relation to exist in the tagspace
+* For a given tag id, there MUST exist exactly one subordinate relation
+* The object of a subordinate relation MUST exist
 
 ### 3.4 Predicates
 
-Predicates define statements about a subject.
+Predicates define relations about a subject.
 
 A predicate consists of a relator followed by an object_list.
+
+A relator MUST be a tag subordinate to `_rel` (`POS_RELATOR`).
+
+A relator alone is not a predicate.
 
 ```tagl
 >> dog _has legs = 4;
@@ -122,7 +129,28 @@ A predicate consists of a relator followed by an object_list.
 
 ## 5. Syntax
 
-### 5.1 Statement Types
+### Statements
+
+#### Statement Termination
+
+A statement MUST be terminated by a terminator.
+
+A terminator MUST be one of:
+
+* a semicolon (`;`)
+* a double newline (`"\n\n"`)
+
+The scanner MUST emit a terminator token for either form.
+
+Canonical form:
+
+The `tagspace` `dump()` method outputs the TAGL text of a tagspace in canonical form. 
+
+* A statement MUST be terminated by a double newline
+* A semicolon MUST NOT be used when the following line is empty
+* A semicolon MUST be used when statements are written on consecutive non-empty lines
+
+#### 5.1 Statement Types
 
 * PUT
 * GET
@@ -130,7 +158,7 @@ A predicate consists of a relator followed by an object_list.
 * QUERY
 * SET
 
-### 5.2 PUT Grammar
+#### 5.2 PUT Grammar
 
 ```bnf
 put_statement ::= ">>" subject_sub_relation predicates
@@ -154,18 +182,18 @@ object ::= TAG "=" QUANTIFIER
 object ::= TAG "=" STRING
 ```
 
-### 5.3 GET Grammar
+#### 5.3 GET Grammar
 
 ```bnf
 get_statement ::= "<<" subject
 ```
 
-### 5.4 DELETE Grammar
+#### 5.4 DELETE Grammar
 
 * Same as PUT
 * MUST NOT include sub relation
 
-### 5.5 QUERY Grammar
+#### 5.5 QUERY Grammar
 
 ```bnf
 query_statement ::= "??" interrogator predicates
