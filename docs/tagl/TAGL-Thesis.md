@@ -40,3 +40,45 @@ Moving, paragraph by paragraph, chapter by chapter, detailing the TAGL language 
 I will provide the background and introduction of TAGL later, so lets jump forward to the ErLang Thesis section `1.2 Thesis outline` 
 
 TASK: Provide a sparse/high level TAGL Thesis Outline - we can fill in detail later.
+
+## Identity
+
+The tagd system addresses two fundamental questions:
+
+* What is it?
+* How is it related?
+
+These questions are resolved through a unified model:
+
+* identity is defined by one heirarchical subordinate relation
+* relations are defined by horizontal predicate relations
+
+In tagd, meaning is derived structurally:
+
+* a tag’s position in the hierarchy (given by its rank) establishes its identity within the tagspace
+* predicate relations describe how the tag relates to other tags
+
+TAGL provides a formal language for acting upon these structures. The canonical form of a tagspace is its dump - the UTF-8 TAGL code that repesents the tagspace (and can be loaded).
+
+Imagine canonical tagspace dump on a large canvas where the TAGL text is printed in canonical form. TAGL opertions can be imagined as mechanical operations on paper:
+* CMD_PUT: cut and insert a section
+* CMD_GET: select and extract a section
+* CMD_QUERY: scan for then select and extract matching sections
+* CMD_DELETE: cut out a section
+
+The tagd system provides a computing environment in which these structures can be:
+
+* defined
+* accessed
+* queried
+* compared
+* serialized in canonical form (tagspace dump)
+
+This approach enables knowledge representation that is:
+
+* explicit
+* deterministic
+* inspectable
+
+All semantics are encoded in the tagspace itself. No external schema or hidden interpretation layer is required.
+

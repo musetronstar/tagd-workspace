@@ -4,7 +4,8 @@
 
 ### 1.1 Purpose
 
-TAGL is a semantic-relational language for defining and querying knowledge as a tagspace, a hierarchical structure of tags connected by predicates.
+TAGL is a semantic-relational language for defining and querying knowledge as
+a tagspace, a hierarchical structure of tags connected by predicates.
 
 TAGL expresses:
 * identity via subordinate relations
@@ -40,16 +41,53 @@ This specification does NOT define:
 
 ### 2.2 Definitions
 
-* tag: UTF-8 semantic identifier  
-* tagspace: tree of tags defined by sub relations  
+* tag: a semantic-relational entity identified nominally by a globally unique
+  UTF-8 text label and structurally by its subordinate relation within a
+  tagspace
 
-* subject: primary tag in a statement  
-* object: target of a relation  
+* tagspace: a tree of tags defined using subordinate relations
+  (aka identity relations). Tags derive their structural identity through their
+  position in the tree hierarchy
 
-* relator: a tag that relates a subject to one or more objects  
+* subject: the tag for which a subordinate relation defines identity and to
+  which zero or more predicates are applied
 
-* predicate: a relator with an object_list  
+* object: a tag that is related to a subject by a relator which MAY bind to a
+  optional modifier using an operator.
 
+* modifier: a UTF-8 byte string value bound to an object.
+  A NULL value indicates a bare object with no modifier
+
+* quantifier: a numeric modifier (CURRENT: number stored as UTF-8 text)
+
+* object_list: one or more objects
+
+* sub_relator: a specific object in an *identity relation* that
+  cannot be modified
+
+* super_object: the object of a tag’s *identity relation*, to which the
+  subject is subordinate
+
+* relator: a tag that relates a subject to an object_list
+
+* predicate: a relation of `[relator + object_list]` applied to a subject
+
+* predicate_list: a relator and its associated object_list
+
+* relation: a `[relator + object]` or a `[sub_relator + super_object]`
+  applied to a subject
+
+* identity relation: (aka subordinate relation,  sub relation): a relation
+  formed by a `[sub_relator + super_object]` that determines the rank of a
+  tag (directly under the super_object) and which provides structural identity
+
+* nominal identity: the identity of a tag defined by its globally unique
+  UTF-8 label
+
+* structural identity: the identity of a tag defined by its subordinate
+  relation (rank) and predicate_list
+
+Notes:
 A predicate is formed when a relator is followed by an object_list.  
 A relator alone is not a predicate.
 
@@ -95,6 +133,8 @@ A relator alone is not a predicate.
 ```tagl
 >> dog _has legs = 4;
 ```
+
+Note: The `object = modifier` (`legs = 4`) also operates like a `key = value` or `attribute = property`)
 
 ## 4. Lexical Structure
 
