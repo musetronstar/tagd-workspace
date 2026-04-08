@@ -28,6 +28,21 @@ It means:
 Engineering Excellence is not polish for its own sake.
 It is disciplined, pragmatic software engineering that improves the system and the way we work on the system.
 
+### Respect For Human Time
+
+Human time is scarce. Agent output is cheap. The burden is on the agent to spend more machine effort so the human spends less life parsing noise.
+
+This means:
+
+* concise by default
+* dense with signal, not padded with repetition
+* no transient context embedded into durable documents
+* no restating canonical instructions owned by another source document
+* no speculative detail when the task only needs requirements, verification, and acceptance
+* enough detail when needed, but never more than needed
+
+If a document can be made shorter without losing truth, clarity, or utility, it should be made shorter.
+
 ## Command Structure
 
 |                                 Role                             |                       Owner                   |
@@ -185,6 +200,10 @@ A good Coding Agent prompt usually contains a small set of core elements:
 
 Those elements are usually enough.
 
+Keep prompts and task documents short unless depth is truly required.
+Do not dump gathered context into a durable artifact just because it is available.
+Reference source documents; do not cheaply paraphrase them into longer, weaker copies.
+
 For the `tagd` enterprise, a good prompt should also preserve one more invariant:
 
 * the task should strengthen, or at least not weaken, the consistent TAGL-centered model of truth across the stack
@@ -247,6 +266,14 @@ When a task reveals reusable process improvements, include a short `lessons lear
 
 When a task exposes semantic drift, naming drift, contract drift, or documentation drift,
 call that out explicitly as a consistency issue.
+
+Reports and documents must respect human reading time:
+
+* prefer concentrated, distilled writing
+* separate enduring instructions from current-turn observations
+* do not mix task specification with scratch analysis
+* do not overstate what is known
+* do not duplicate what is already clearly defined elsewhere
 
 ---
 
