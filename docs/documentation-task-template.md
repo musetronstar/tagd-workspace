@@ -2,6 +2,12 @@
 
 [One paragraph. State what must be documented, for whom, and why it matters to the project mission.]
 
+**Engineering Excellence**
+
+* State how the document will improve consistency across code, tasks, reports, and doctrine.
+* If the document describes a TAGL-facing subsystem, state how it helps the enterprise keep speaking TAGL consistently.
+* Name whether the output is active reference, planning-only, historical, or superseded.
+
 ## Scope
 
 ### Read
@@ -25,6 +31,8 @@ Follow `docs/ai-assisted-dev-doctrine.md`
 * Keep one source of truth per topic; avoid duplicating instructions across tasks, reports, and templates.
 * Use documentation to sharpen the next engineering step: boundaries, decisions, evidence, and remaining work.
 * When documenting generated or archived artifacts, state whether they are active, historical, superseded, or planning-only.
+* Preserve consistency of meaning, status, and terminology across the enterprise.
+* **We eat our own dogfood**: documentation should help the enterprise keep speaking TAGL as one truth model, not split meaning across disconnected descriptions.
 
 ## Constraints
 
@@ -38,6 +46,7 @@ Follow `docs/ai-assisted-dev-doctrine.md`
   4. files referenced by the materials above
 * inspect referenced code, tests, and relevant commit history before declaring a document complete
 * distinguish completed work, active work, and proposed future work
+* name the source of truth when documenting semantics, contracts, or workflow
 
 ## Language & Style
 
@@ -59,6 +68,7 @@ Follow `docs/ai-assisted-dev-doctrine.md`
 * fidelity: key claims are grounded in the inspected sources
 * utility: the document helps a future agent or reviewer choose the next step with less ambiguity
 * non-duplication: the document links or defers to existing sources where possible instead of restating them poorly
+* consistency: the document reduces semantic, status, or process drift in the corpus
 
 ## Deliverable: Concise Report
 

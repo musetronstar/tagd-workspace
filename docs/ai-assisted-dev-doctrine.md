@@ -6,6 +6,14 @@
 
 Engineering Excellence is a core operating principle in everything we do.
 
+**We eat our own dogfood.**
+
+**Dogfooding is an operating principle: we build the tagd enterprise by speaking TAGL ourselves.**
+
+**Engineering Excellence in the `tagd` enterprise means speaking TAGL end-to-end and preserving one consistent model of truth across the entire system: input in TAGL, processing in TAGL, output in TAGL, errors in TAGL, logs in TAGL, web-service mappings in TAGL, and eventually apps generated from TAGL.**
+
+**Consistency is safety. Consistency is correctness. Consistency is how truth survives across semantics, ontology, code, data, tests, documentation, and process.**
+
 It means:
 
 * correctness before convenience
@@ -14,6 +22,8 @@ It means:
 * deterministic behavior and reproducible verification
 * strong alignment between doctrine, code, tests, build rules, and documentation
 * process improvement as part of delivery, not a separate activity
+* semantic, ontological, and system consistency across the enterprise
+* using TAGL as the native language of the enterprise rather than translating truth into disconnected side systems
 
 Engineering Excellence is not polish for its own sake.
 It is disciplined, pragmatic software engineering that improves the system and the way we work on the system.
@@ -67,6 +77,7 @@ It should decide *how* to do the work within the given boundaries.
 - Encode naming conventions, module boundaries, and design intent
 - Preserve process memory: templates, reports, lessons learned, and reusable guidance should accumulate here rather than being rediscovered each time
 - Serve Engineering Excellence by making good practice easier to repeat than bad practice
+- Help the enterprise keep speaking one language of truth instead of fragmenting across code, tools, and documentation
 
 ---
 
@@ -86,6 +97,7 @@ Prefer small durable process improvements over broad meta-discussion.
 
 Engineering Excellence applies here too:
 delivery is not complete when the code change lands but the same avoidable confusion remains in the workflow.
+If we keep rediscovering the same truth instead of capturing it once in TAGL, tests, templates, or doctrine, we are not yet operating with Engineering Excellence.
 
 If a process improvement is proposed, it should be:
 
@@ -113,6 +125,7 @@ Useful self-learning outputs include:
 * better test expectations
 * clearer archive classifications
 * more precise terminology for recurring engineering concepts
+* better alignment between TAGL, code structure, logs, errors, and documentation
 
 The standard for self-learning is pragmatic usefulness:
 
@@ -126,7 +139,7 @@ That is Engineering Excellence expressed as organizational memory.
 
 ## Prompt Doctrine
 
-A good Coding Agent prompt contains exactly five things:
+A good Coding Agent prompt usually contains a small set of core elements:
 
 ```
 # Task
@@ -170,7 +183,11 @@ A good Coding Agent prompt contains exactly five things:
 3. open concerns
 ```
 
-That is usually enough.
+Those elements are usually enough.
+
+For the `tagd` enterprise, a good prompt should also preserve one more invariant:
+
+* the task should strengthen, or at least not weaken, the consistent TAGL-centered model of truth across the stack
 
 ---
 
@@ -212,6 +229,9 @@ full required suite, not just build artifacts.
 Prefer repo-owned local fixtures for normal tests over external mutable data
 files. Use external files only for explicit integration coverage.
 
+Prefer solutions that keep the enterprise speaking TAGL directly over solutions
+that introduce parallel ad hoc representations without necessity.
+
 Mark aggregate make targets like `all`, `tests`, and `clean` as `.PHONY`.
 
 Implement the specified external contract directly.
@@ -224,6 +244,9 @@ concise git commit message.
 
 When a task reveals reusable process improvements, include a short `lessons learned` or
 `process improvement` note and identify the best repo artifact to update.
+
+When a task exposes semantic drift, naming drift, contract drift, or documentation drift,
+call that out explicitly as a consistency issue.
 
 ---
 

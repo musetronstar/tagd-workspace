@@ -2,6 +2,12 @@
 
 [One paragraph. State the desired change in behavior or structure, not the internal implementation choreography.]
 
+**Engineering Excellence**
+
+* State how this task preserves or improves consistency across semantics, ontology, code, tests, build behavior, and documentation.
+* If the task touches TAGL-facing behavior, state how it keeps the enterprise speaking TAGL consistently.
+* Name the seam where change should be concentrated.
+
 ## Scope
 
 ### Read
@@ -26,6 +32,8 @@ Follow `docs/ai-assisted-dev-doctrine.md`
 * Keep generated artifacts, build paths, and test fixtures aligned with the active workspace layout.
 * Reuse existing repo patterns before inventing new ones.
 * Reduce coupling by clarifying ownership boundaries, not by introducing extra abstraction for its own sake.
+* Preserve consistency as a first-class engineering goal.
+* **We eat our own dogfood**: prefer designs that keep input, processing, output, diagnostics, and service seams aligned with TAGL instead of fragmenting the truth model.
 
 ## Constraints
 
@@ -40,6 +48,7 @@ Follow `docs/ai-assisted-dev-doctrine.md`
 * do not silently broaden scope when a missing prerequisite is discovered
 * if generated files or build products are expected, name them explicitly
 * if a report or plan is part of the task, distinguish completed work from proposed follow-on work
+* if the task changes a truth-bearing structure, state the source of truth explicitly
 
 ## Language & Style
 
@@ -62,6 +71,7 @@ Follow `docs/ai-assisted-dev-doctrine.md`
 * behavior: the requested contract is preserved or improved as specified
 * verification: named tests/build commands pass
 * reviewability: resulting structure is easier to understand, extend, or swap at the stated seam
+* consistency: the change reduces or avoids semantic, ontological, system, or documentation drift
 
 ## Deliverable: Concise Report
 

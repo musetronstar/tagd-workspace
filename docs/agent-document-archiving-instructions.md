@@ -3,6 +3,12 @@
 I added target archive directories where I wanted completed files moved.
 I then want an assessment of completed tasks, relevent generated documents, and tasks left to complete.
 
+**Engineering Excellence**
+
+* Archive decisions must preserve a consistent model of truth across tasks, reports, and current code.
+* Do not let historical plans, active references, completed work, and superseded documents blur together.
+* **We eat our own dogfood**: if TAGL, code, tests, and reports disagree, resolve the status by inspecting the actual truth-bearing artifacts.
+
 ## Directories
 
     TASKS.d/     # agent tasks markdown files
@@ -67,6 +73,11 @@ For <target_file> in each target_directory:
   Else
     do nothing, but [take note for report]
 
+Treat archive movement as an epistemic operation:
+* archive only when the file's status is consistent with current code, tests, and history
+* leave active any file that still serves as a source of truth, plan, or open mission
+* mark superseded reasoning as historical rather than letting it masquerade as current guidance
+
 ## Report Instructions
 
 Write the `.md` report in `out/` consistent with our naming conventions.
@@ -81,4 +92,3 @@ Write the `.md` report in `out/` consistent with our naming conventions.
 1. after action report, status of the project as **impact statements by topic**
 2. well organized document of actionable intelligence of **impact statements by topic** within the context and mission of reaching project (tagd-workspace) goal and applying lessons learned.
 3. Conclude with a list of tasks to be complete as **impact statements by topic**
-
