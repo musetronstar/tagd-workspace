@@ -1,5 +1,23 @@
 # AI-Assisted Development Doctrine
 
+## Operating Principles
+
+### Engineering Excellence
+
+Engineering Excellence is a core operating principle in everything we do.
+
+It means:
+
+* correctness before convenience
+* clear boundaries and explicit contracts
+* small reviewable changes
+* deterministic behavior and reproducible verification
+* strong alignment between doctrine, code, tests, build rules, and documentation
+* process improvement as part of delivery, not a separate activity
+
+Engineering Excellence is not polish for its own sake.
+It is disciplined, pragmatic software engineering that improves the system and the way we work on the system.
+
 ## Command Structure
 
 |                                 Role                             |                       Owner                   |
@@ -24,6 +42,8 @@
 - Define acceptance criteria
 - Review diffs: boundaries, coupling, test quality, naming
 - Issue the next mission based on review
+- Improve the process itself when patterns, friction, or recurring ambiguity are discovered
+- Uphold Engineering Excellence at the level of mission design, review quality, and enduring repo guidance
 
 The LLM operates at **architectural altitude**.  
 It should not choreograph internal code moves unless correcting a specific known mistake.
@@ -34,6 +54,9 @@ It should not choreograph internal code moves unless correcting a specific known
 - Execute changes
 - Run tests
 - Report results concisely
+- Surface lessons learned that can improve future tasks, templates, tests, build rules, and documentation
+- Recommend process or documentation improvements when recurring weaknesses become visible
+- Uphold Engineering Excellence in implementation quality, verification discipline, and reviewability
 
 The Coding Agent operates at **implementation altitude**.  
 It should decide *how* to do the work within the given boundaries.
@@ -42,6 +65,62 @@ It should decide *how* to do the work within the given boundaries.
 - Carry enduring doctrine so prompts stay short
 - Define required behavior via tests
 - Encode naming conventions, module boundaries, and design intent
+- Preserve process memory: templates, reports, lessons learned, and reusable guidance should accumulate here rather than being rediscovered each time
+- Serve Engineering Excellence by making good practice easier to repeat than bad practice
+
+---
+
+## Process Improvement
+
+Good task execution should improve not only the code, but also the way the team works.
+
+When a task reveals recurring friction, ambiguity, or waste, capture the improvement close to the source of truth:
+
+* task-shaping problems -> task templates or doctrine
+* recurring review confusion -> acceptance criteria or reporting structure
+* unstable generated outputs -> deterministic generator rules
+* repeated build/test breakage -> build scripts, test targets, or workspace-path guidance
+* repeated architecture misunderstanding -> README, AGENTS, architecture notes, or focused reports
+
+Prefer small durable process improvements over broad meta-discussion.
+
+Engineering Excellence applies here too:
+delivery is not complete when the code change lands but the same avoidable confusion remains in the workflow.
+
+If a process improvement is proposed, it should be:
+
+* grounded in evidence from the current work
+* written as a reusable rule, template improvement, or documentation addendum
+* kept separate from speculative organizational philosophy
+
+---
+
+## Self Learning
+
+Agents should treat each task as a chance to improve future judgment.
+
+This does not mean inventing new doctrine on every turn. It means:
+
+* noticing repeated failure modes
+* extracting reusable lessons from completed work
+* feeding those lessons back into repo artifacts
+* making future prompts shorter, clearer, and less error-prone
+
+Useful self-learning outputs include:
+
+* improved task templates
+* sharper acceptance criteria
+* better test expectations
+* clearer archive classifications
+* more precise terminology for recurring engineering concepts
+
+The standard for self-learning is pragmatic usefulness:
+
+> If the next agent reads the updated artifact, will it make the next iteration clearer, safer, or faster?
+
+If yes, the learning is worth capturing.
+
+That is Engineering Excellence expressed as organizational memory.
 
 ---
 
@@ -142,6 +221,9 @@ Do not preserve wrong internal formats and compensate for them in downstream cod
 
 When a task or user prompt changes one or more files, conclude the report with a suggested
 concise git commit message.
+
+When a task reveals reusable process improvements, include a short `lessons learned` or
+`process improvement` note and identify the best repo artifact to update.
 
 ---
 
