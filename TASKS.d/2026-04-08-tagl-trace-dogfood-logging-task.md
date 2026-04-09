@@ -91,3 +91,123 @@ Follow `docs/ai-assisted-dev-doctrine.md`
 4. reduced implementation plan
 5. verification performed
 6. suggested concise git commit message
+
+## Logger Design Addendum
+
+### Current Trace Finding
+
+`tagsh -f tagd/tagsh/bootstrap.tagl --trace -n` currently emits mixed output:
+
+* valid TAGL source echo
+* valid TAGL comments such as `-- TAGD_OK`
+* non-TAGL parser trace lines such as `tagl_trace: Shift ...`
+* non-TAGL source-location diagnostics such as `tagl.cc:124 line ...`
+* non-TAGL callback diagnostics such as `callback::cmd_put: ...`
+* non-TAGL scanner buffer diagnostics such as `fill ln:` and `print_buf:`
+* interleaved stdout/stderr output that can corrupt otherwise readable lines
+
+This proves `--trace` is not a TAGL-native logging mode and should be migrated behind a real logger.
+
+### Logging Direction
+
+Create a minimal logger in core `tagd/`.
+
+The logger is a conventional logging facility:
+
+* uses traditional syslog-style levels
+* defaults to `stderr`
+* supports a configurable `std::ostream` sink for tests and future routing
+* logs ordinary messages without requiring tag or tagdb knowledge
+* can accept a `tagd::event` or `tagd::error` and print it as TAGL
+
+Log level and event type are separate concepts.
+
+Event type describes what happened. Log level controls filtering and operational treatment.
+
+### Initial Logger Shape
+
+Start with a small interface, likely in `tagd/include/tagd/logger.h`:
+
+```c++
+namespace tagd {
+	enum class log_level {
+		emergency,
+		alert,
+		critical,
+		error,
+		warning,
+		notice,
+		info,
+		debug
+	};
+
+	class logger {
+		public:
+			logger();
+			explicit logger(std::ostream&);
+
+			void level(log_level);
+			log_level level() const;
+
+			void log(log_level, const std::string&);
+			void log(log_level, const tagd::event&);
+			void log(log_level, const tagd::error&);
+	};
+}
+```
+
+Do not over-design sinks, formatting backends, or async buffering in the first iteration. Keep the seam testable.
+
+### Event Direction
+
+Do not make every trace line an event.
+
+Events are significant system facts, such as:
+
+* request/session lifecycle points
+* tagdb method results
+* command execution results
+* structured errors
+* future HTTP request/response observations
+
+Avoid creating `tagd::code` values for every event type. That is not sustainable.
+
+Add an event constructor that accepts one event type tag:
+
+```c++
+tagd::event::event(tagd::session&, const tagd::id_type& program, const tagd::id_type& event_type_tag);
+tagd::event::event(const tagd::id_type& event_type_tag);
+```
+
+The one-argument constructor should create a normal event instance whose `super_object` is the supplied event type. Internal callers should prefer hard tag macros for event type ids.
+
+### Hard Tag Direction
+
+Add specific event type hard tags only when an event is meaningful enough to persist or inspect.
+
+Potential first event type families:
+
+```tagl
+_log_event _type_of _event
+_command_event _type_of _event
+_tagdb_event _type_of _event
+_http_event _type_of _event
+```
+
+Do not encode log level into the event type hierarchy.
+
+### Migration Direction
+
+Retire `--trace` and global `TRACE*` controls by routing their useful output through the logger.
+
+Migration order:
+
+1. Add core `tagd::logger` with level filtering and testable sink.
+2. Add command-line log-level and verbosity options to `tagsh`.
+3. Route existing `tagsh --trace` output through logger calls.
+4. Remove or comment out low-value scanner/parser noise.
+5. Convert useful parser/scanner diagnostics to `debug` or `trace` logger messages.
+6. Add `httagd` request logging through the same logger.
+7. Introduce durable `tagd::event` instances only for significant lifecycle/result events.
+
+`--trace` may remain temporarily as a compatibility alias for the most verbose logger setting, but it should stop directly toggling global trace behavior.
