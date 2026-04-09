@@ -2,7 +2,7 @@
 
 Status: active reference
 Date: 2026-04-08
-Task: `out/2026-04-08-tagl-trace-dogfood-logging-task.md`
+Task: `TASKS.d/2026-04-08-tagl-trace-dogfood-logging-task.md`
 
 ## Findings
 
@@ -20,14 +20,19 @@ Task: `out/2026-04-08-tagl-trace-dogfood-logging-task.md`
     TS_NOT_FOUND _type_of _error
     _caused_by _file = "/tmp/against-tagr-candidate.tagl", _line_number = 1, _unknown_tag = not_agreeing_with
     ```
-* `httagd` is not currently built in this workspace, but its entrypoint still enables `TAGDB`, `TAGL`, and `HTTAGD` tracing together.
+* `httagd` is built and runnable in this workspace. A bounded `httagd --trace` startup produced thousands of mixed trace lines before serving requests.
+* `httagd --trace` currently enables `TAGDB`, `TAGL`, and `HTTAGD` tracing together, so SQL trace, scanner echo, parser trace, callback trace, structured errors, and raw stderr output share one stream.
 
 ## Role Map
 
 * Trace activation:
   * `tagd/tagsh/src/tagsh.cc`
   * `tagd/httagd/app/main.cc`
+  * `tagd/httagd/src/httagd.cc`
   * role: coarse global trace switching
+* SQL trace:
+  * `tagd/tagdb/sqlite/src/sqlite.cc`
+  * role: database statement instrumentation
 * Parser trace:
   * `tagd/tagl/src/tagl.cc`
   * `ParseTrace(stderr, "tagl_trace: ")`
@@ -60,6 +65,7 @@ What is weak:
 * The root cause is buried inside parser-noise and token-noise.
 * `Syntax Error!` is generic and not repair-oriented.
 * The trace does not distinguish clearly between:
+  * SQL/database instrumentation
   * debug instrumentation
   * parser mechanics
   * semantic lookup failure
@@ -81,6 +87,7 @@ Compared to good developer-facing errors, the current system is weak on:
 * Emit logs in TAGL form, or TAGL comments when full TAGL facts are not appropriate.
 * Replace direct `std::cerr` logging macros with a shared logger boundary.
 * Make module traces additive, not chaotic: scanner, parser, driver, db, and service layers should share one rendering discipline.
+* Use the new event/session foundation as the identity seam for future log events; do not require every trace line to become a persistent event.
 
 ### Better TAGL-native errors
 
@@ -97,6 +104,7 @@ Compared to good developer-facing errors, the current system is weak on:
 
 * Replace or narrow coarse `TRACE*` globals with a disciplined logger/trace interface.
 * Allow targeted module tracing without forcing all subsystems into the same raw stderr stream.
+* Keep scanner/parser traces available for deep debugging, but default request/session traces should remain useful without parser-internal noise.
 
 ## Verification
 
@@ -107,7 +115,9 @@ Compared to good developer-facing errors, the current system is weak on:
 * Traced validation:
   * `tagd/tagsh/bin/tagsh --trace -n -f /tmp/against-tagr-candidate.tagl`
 * `httagd` runtime availability:
-  * `test -x tagd/httagd/bin/httagd && echo 'httagd built' || echo 'httagd not built'`
+  * `test -x tagd/httagd/bin/httagd && echo httagd-built || echo httagd-not-built`
+* Bounded `httagd --trace` sample:
+  * `timeout 3s tagd/httagd/bin/httagd --trace --file tagd/tagsh/bootstrap.tagl --www-dir tagd/httagd/tests/www`
 
 ## Suggested Commit Message
 
