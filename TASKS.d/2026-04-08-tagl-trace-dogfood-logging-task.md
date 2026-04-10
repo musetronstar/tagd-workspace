@@ -250,12 +250,14 @@ _has _role:system = _role:tagsh
 
 Validation direction:
 
-* core/internal event constructors should validate event type ids against hard tags once hard-tag lookup is available in core `tagd`
+* core/internal event constructors should validate event type ids against hard tags once an intentional hard-tag lookup seam is available
 * runtime extension event types should be validated at registration boundaries, not by accepting arbitrary event strings everywhere
 * avoid dynamic tagdb lookup in low-level event construction unless an explicit validation context is supplied
 * preserve a clear escape hatch only if required during migration, and name it explicitly as unchecked
 
-The hard-tag lookup currently exists as generated `gperf` lookup under `tagdb::hard_tag`. If core `tagd::event` needs hard-tag validation, move or expose a minimal hard-tag lookup seam in core `tagd` rather than making core event construction depend on a live tagdb.
+Hard-tag lookup currently exists as generated `gperf` lookup under `tagdb::hard_tag`. This does not require a live tagdb instance, but it does intentionally use `tagdb::rowid_t`, whose type was chosen to be byte-compatible with SQLite row ids. Do not move hard-tag lookup into base `tagd` or redefine `rowid_t` merely to satisfy a build dependency.
+
+TODO hard_tagdb: introduce an explicit in-between hard-tag lookup layer when needed. A `hard_tagdb` should represent the hard-coded system tagspace: below ordinary tagdb instances, above base tagd semantics, and responsible for preserving hard-tag row identity, lookup, rank, POS, and super-object consistency. Until that design exists, use narrow temporary adapters for logging/events/errors and document them as bootstrap code.
 
 ### Migration Direction
 
