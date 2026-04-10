@@ -196,6 +196,67 @@ _http_event _type_of _event
 
 Do not encode log level into the event type hierarchy.
 
+### Required Role And Event Hard Tags
+
+Events are facts the system claims about itself. Therefore internal event types must be known to the system.
+
+Do not allow core/internal events to use arbitrary string event types. Internal callers should construct events with `HARD_TAG_*` constants. If an event type is important enough to emit, persist, inspect, or filter, add a hard tag for it.
+
+Roles are also ontology concepts, not just logger labels. A role describes responsibility or authority in a context. Keep role modeling independent from the logger so roles can later support diagnostics, runtime introspection, permissions, and documentation.
+
+Initial role hierarchy should distinguish system responsibility from security authority:
+
+```tagl
+_role _sub _entity
+
+_role:system _type_of _role
+_role:scanner _type_of _role:system
+_role:parser _type_of _role:system
+_role:driver _type_of _role:system
+_role:tagdb _type_of _role:system
+_role:tagsh _type_of _role:system
+_role:httagd _type_of _role:system
+
+_role:security _type_of _role
+```
+
+Add security-role children later when user, group, and permission semantics are being implemented. Do not collapse execution responsibility and security authority into one undifferentiated role class.
+
+Initial event hard tags should be broad enough to avoid churn but specific enough to be inspectable:
+
+```tagl
+_log_event _type_of _event
+_command_event _type_of _event
+_tagdb_event _type_of _event
+_http_event _type_of _event
+_parse_event _type_of _event
+_scan_event _type_of _event
+```
+
+Add more specific event children only when there is a real emitted event and a test or consumer that benefits from inspecting it.
+
+Keep EVURI structure unchanged:
+
+```text
+ev:time!host!principal!program!session_id!sequence!event_type_tag
+```
+
+Do not encode role into the `program` field. `program` identifies the executable/component. `event_type_tag` carries semantic specificity. Role, when needed, should be represented as logger filter metadata or as TAGL relations on an event:
+
+```tagl
+>> ev:...!tagsh!session!42!_command_event
+_has _role:system = _role:tagsh
+```
+
+Validation direction:
+
+* core/internal event constructors should validate event type ids against hard tags once hard-tag lookup is available in core `tagd`
+* runtime extension event types should be validated at registration boundaries, not by accepting arbitrary event strings everywhere
+* avoid dynamic tagdb lookup in low-level event construction unless an explicit validation context is supplied
+* preserve a clear escape hatch only if required during migration, and name it explicitly as unchecked
+
+The hard-tag lookup currently exists as generated `gperf` lookup under `tagdb::hard_tag`. If core `tagd::event` needs hard-tag validation, move or expose a minimal hard-tag lookup seam in core `tagd` rather than making core event construction depend on a live tagdb.
+
 ### Migration Direction
 
 Retire `--trace` and global `TRACE*` controls by routing their useful output through the logger.
