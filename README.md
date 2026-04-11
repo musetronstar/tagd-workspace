@@ -19,4 +19,4 @@ This workspace supports TAGLization work across linked repositories.
 ## Notes
 
 * `TAGL-README.md` describes TAGL.
-* Repository symlinks are part of normal workspace structure.
+* `tagd`, `tagd-simple-english`, `tagr`, and `tagd-nlp` are git worktrees.

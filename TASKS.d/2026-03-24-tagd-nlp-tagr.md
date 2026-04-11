@@ -15,12 +15,12 @@ Read the markdown files in `tagr/*.md` and `tagr/docs/*.md` from the context of 
 
 ## Scope
 
-Do go to directories outside './' except the targets of these symlinks:
+Do not go to directories outside './' except these git worktrees:
 
-    tagd -> /home/inc/projects/tagd
-    tagd-nlp -> /home/inc/projects/tagd-nlp
-    tagd-simple-english -> /home/inc/projects/tagd-simple-english
-    tagr -> ../tagr
+    tagd/
+    tagd-nlp/
+    tagd-simple-english/
+    tagr/
 
 Files/Directories which can be changed:
 
