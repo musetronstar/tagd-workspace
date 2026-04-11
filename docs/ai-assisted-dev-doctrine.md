@@ -259,7 +259,7 @@ Do not preserve wrong internal formats and compensate for them in downstream cod
 ## Reporting
 
 When a task or user prompt changes one or more files, conclude the report with a suggested
-concise git commit message.
+concise git commit message in the format `<agent>: <commit message>`.
 
 When a task reveals reusable process improvements, include a short `lessons learned` or
 `process improvement` note and identify the best repo artifact to update.
