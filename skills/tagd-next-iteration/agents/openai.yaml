@@ -1,0 +1,3 @@
+display_name: Tagd Next Iteration
+short_description: Propose the next small tagd TDD slice after a checkpoint.
+default_prompt: Propose the next small tagd iteration from the current checkpoint without implementing it.

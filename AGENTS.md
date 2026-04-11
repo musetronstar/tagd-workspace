@@ -25,6 +25,16 @@ TAGLize various forms of input and construct meaninful tagspaces.
 Task `.md` files are stored in `TASKS.d`.
 Only follow the task specified in the user prompt.
 
+## Meta Commands
+
+In conversation, `~name` indicates a workspace meta-command convention, not shell syntax.
+
+Current meta-commands:
+* `~next` request the next small TDD iteration from the current checkpoint
+* `~status` request current worktree status and checkpoint readiness
+
+`~/...` indicates a home-directory path prefix, not a meta-command.
+
 ## Workflow
 
 ### One small step at a time
