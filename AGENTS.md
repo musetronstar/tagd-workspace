@@ -1,76 +1,31 @@
 # tagd Agent Workspace
 
-## Symlinks
+## Startup
 
-This workspace contains symlinks to these repositories:
-* `tagd/` tagd semantic-relational database and TAGL languge
-* `tagd-simple-english/` VOA Wordbook Simple English dictionary to be translated into TAGL and httagd web app
-* `tagr/` natural language to TAGL translator
+On each new session:
 
-## TAGL
+1. Find the most recent markdown file in `TASKS.d/`.
+2. Read that file.
+3. Use `AGENTS.md` as standing workflow doctrine.
+4. Treat the selected task file as the current assignment.
+5. Before editing, summarize objective, scope, constraints, deliverables, and acceptance criteria.
+6. If doctrine and task conflict, stop and report the conflict.
 
-Understand the TAGL language in `TAGL-README.md`
-
-## Definitions
-
-tagspace: a tagd semantic-relational database using TAGL
-TAGLize: to translate (or tranform) input into TAGL
-
-## Goals
-
-TAGLize various forms of input and construct meaninful tagspaces.
-
-## Tasks
-
-Task `.md` files are stored in `TASKS.d`.
-Only follow the task specified in the user prompt.
+If the user explicitly provides the task to follow, use that instead.
 
 ## Meta Commands
 
-In conversation, `~name` indicates a workspace meta-command convention, not shell syntax.
-
-Current meta-commands:
-* `~next` request the next small TDD iteration from the current checkpoint
-* `~status` request current worktree status and checkpoint readiness
-
-`~/...` indicates a home-directory path prefix, not a meta-command.
+* `~next` asks for the next small TDD iteration from the current checkpoint.
+* `~status` asks for worktree status and checkpoint readiness.
+* `~/...` is a home-directory path prefix, not a meta-command.
 
 ## Workflow
 
-### One small step at a time
-
-Do not make sweeping changes. Each edit should do exactly one thing.
-Break large tasks into small steps and iterate.
-
-Prefer the smallest change possible:
-* write the test first
-* make the minimal code change to pass it
-* build and test after each step
-
-### Preserve the author's style
-
-When editing existing code:
-* do not reformat lines that do not need changing
-* do not change whitespace, indentation, or brace style on untouched lines
-* do not alter comments unless explicitly asked
-* do not remove commented-out code blocks without being explicitly asked
-
-Comments and TODOs are design intent, not clutter.
-
-### Minimal diffs
-
-Produce the smallest possible diff that achieves the goal.
-If a line does not need to change to make the feature work, do not touch it.
-
-Assume the author may review changes with `git diff` and will care about
-unnecessary edits.
-
-### Reviewability
-
-For non-trivial changes, prefer a patch the author can review rather than a
-large rewrite.
-
-### Verification
-
-Build and test after every change.
-Before reporting success, make sure the current step is complete and verified.
+* Work in small, reviewable steps.
+* Prefer test first, then the smallest code change.
+* Build and test after each change.
+* Preserve existing style on untouched lines.
+* Do not reformat unrelated code.
+* Do not alter comments or remove commented-out blocks unless asked.
+* Keep diffs minimal.
+* If a line does not need to change, leave it alone.
