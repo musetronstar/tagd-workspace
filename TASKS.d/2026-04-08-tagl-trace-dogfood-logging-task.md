@@ -57,7 +57,7 @@ Follow `docs/ai-assisted-dev-doctrine.md`
    * a universal TAGL-native logger
    * improved TAGL-native error reporting built on `tagd:error`
    * migration away from chaotic mixed-format trace output
-   * disciplined use or replacement of current global `TRACE*` controls
+   * complete retirement of current global `TRACE*` controls and `--trace`
 
 ## Constraints
 
@@ -273,4 +273,4 @@ Migration order:
 6. Add `httagd` request logging through the same logger.
 7. Introduce durable `tagd::event` instances only for significant lifecycle/result events.
 
-`--trace` may remain temporarily as a compatibility alias for the most verbose logger setting, but it should stop directly toggling global trace behavior.
+Do not preserve `--trace` as a compatibility alias. Remove `--trace` and all `*TRACE*` globals, toggles, and macros once the useful diagnostics have been re-expressed through logger levels and roles.
