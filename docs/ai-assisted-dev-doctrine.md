@@ -219,3 +219,6 @@ Before sending a prompt, ask:
 
 If you are specifying implementation, pull back up to architecture.  
 The agent should own the how.
+
+Write plans in a declarative, assertive style: state what must be true, not how to achieve it.
+When specificity aids the contract — as in test guidance — high-level pseudocode is acceptable.
