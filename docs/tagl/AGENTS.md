@@ -1,8 +1,9 @@
 # tagd Agent Workspace
 
-## Symlinks
+## Git Worktrees
 
 This repository contains git worktrees for:
+
 * `tagd/` tagd semantic-relational database and TAGL languge
 * `tagd-simple-english/` VOA Wordbook Simple English dictionary to be translated into TAGL and httagd web app
 * `tagr/` natural language to TAGL translator
@@ -24,14 +25,14 @@ DO NOT INNOVATE - follow the source.
 
 Here is the epistemological dependency order of our system:
 
-1. tagd/include/tagd/hard-tags.h  hard tag definitions - the axioms
-2. tagd/include/tagd/codes.h      named constants
-3. tagd/include/tagd.h            system primitives
-4. tagd/src/tagd.cc               primitives structures and algorithms
-5. tagd/include/tagd/rank.h       heirarchy and membership (containership)
-6. tagl/src/tagdurl.re.cc         types and tokens according to lexical patterns
-7. tagl/src/parser.y              TAGL grammar
-8. README.md                      Best description and working examples of TAGL we have
+1. tagd/tagd/include/tagd/hard-tags.h  hard tag definitions - the axioms
+2. tagd/tagd/include/tagd/codes.h      named constants
+3. tagd/tagd/include/tagd.h            system primitives
+4. tagd/tagd/src/tagd.cc               primitives structures and algorithms
+5. tagd/tagd/include/tagd/rank.h       heirarchy and membership (containership)
+6. tagd/tagl/src/tagdurl.re.cc         types and tokens according to lexical patterns
+7. tagd/tagl/src/parser.y              TAGL grammar
+8. tagd/README.md                      Best description and working examples of TAGL we have
 
 Report any inconsistencies in the source first and foremost.
 
