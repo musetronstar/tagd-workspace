@@ -136,6 +136,29 @@ A relator alone is not a predicate.
 
 Note: The `object = modifier` (`legs = 4`) also operates like a `key = value` or `attribute = property`)
 
+### 3.5 Types
+
+Modifier values have types, identified by hard tags:
+
+* `_number` — abstract numeric type
+* `_integer` — whole number literal (e.g., `0`, `1`, `55`, `-23`)
+* `_float` — decimal number literal (e.g., `3.14`, `-1.0`, `0.0`)
+
+TAGL subordinate relations:
+
+```tagl
+_integer _is_a _number
+_float   _is_a _number
+_number  _is_a _entity
+```
+
+Rules:
+
+* `_integer` and `_float` are distinct types. No implicit coercion between them.
+* Both types are always signed. A leading `-` is part of the literal token,
+  not a unary operator. `"-23"` MUST be emitted as a single `INTEGER` token.
+* Scientific notation is DEFERRED (not currently supported).
+
 ## 4. Lexical Structure
 
 ### 4.1 Commands
@@ -157,7 +180,8 @@ Note: The `object = modifier` (`legs = 4`) also operates like a `key = value` or
 ### 4.3 Literals
 
 * TAG: UTF-8 label
-* QUANTIFIER: numeric
+* INTEGER: signed whole number (e.g., `0`, `1`, `55`, `-23`)
+* FLOAT: signed decimal number (e.g., `3.14`, `-1.0`, `0.0`)
 * STRING: quoted
 
 ### 4.4 Comments
