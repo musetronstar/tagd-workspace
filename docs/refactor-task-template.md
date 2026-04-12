@@ -2,11 +2,11 @@
 
 [One paragraph. State the desired change in behavior or structure, not the internal implementation choreography.]
 
-**Engineering Excellence**
+## Principles
 
-* State how this task preserves or improves consistency across semantics, ontology, code, tests, build behavior, and documentation.
-* If the task touches TAGL-facing behavior, state how it keeps the enterprise speaking TAGL consistently.
-* Name the seam where change should be concentrated.
+* State the owning seam or contract.
+* State how the change preserves or improves consistency across code, tests, build behavior, and documentation.
+* If the task touches TAGL-facing behavior, state how it preserves a TAGL-centered source of truth.
 
 ## Scope
 
@@ -22,18 +22,6 @@
 ## Doctrine
 
 Follow `docs/ai-assisted-dev-doctrine.md`
-
-## Design Principles
-
-* Work in the smallest meaningful batch that completes one reviewable feature, seam, or contract.
-* Preserve behavior while improving structure unless the task explicitly changes behavior.
-* Respect the existing external contract first: parser contract, CLI surface, file formats, and test expectations.
-* Prefer deterministic outputs, deterministic tests, and explicit tie-breakers in tooling.
-* Keep generated artifacts, build paths, and test fixtures aligned with the active workspace layout.
-* Reuse existing repo patterns before inventing new ones.
-* Reduce coupling by clarifying ownership boundaries, not by introducing extra abstraction for its own sake.
-* Preserve consistency as a first-class engineering goal.
-* **We eat our own dogfood**: prefer designs that keep input, processing, output, diagnostics, and service seams aligned with TAGL instead of fragmenting the truth model.
 
 ## Constraints
 
@@ -68,11 +56,11 @@ Follow `docs/ai-assisted-dev-doctrine.md`
 
 ## Acceptance Criteria
 
-* boundary: changes stay within the declared scope and non-goals
-* behavior: the requested contract is preserved or improved as specified
-* verification: named tests/build commands pass
-* reviewability: resulting structure is easier to understand, extend, or swap at the stated seam
-* consistency: the change reduces or avoids semantic, ontological, system, or documentation drift
+* changes stay within the declared scope and non-goals
+* the requested contract is preserved or improved as specified
+* named tests/build commands pass
+* the resulting structure is easier to understand at the stated seam
+* the change reduces drift between code, tests, and documentation
 
 ## Deliverable: Concise Report
 

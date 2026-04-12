@@ -4,44 +4,32 @@
 
 ### Engineering Excellence
 
-Engineering Excellence is a core operating principle in everything we do.
+Engineering Excellence in the `tagd` enterprise means preserving one consistent model of truth across semantics, code, tests, documentation, build rules, and process.
 
-**We eat our own dogfood.**
+We eat our own dogfood: when a subsystem is TAGL-facing, prefer designs and tests that keep the enterprise speaking TAGL end to end instead of translating truth into disconnected side systems.
 
-**Dogfooding is an operating principle: we build the tagd enterprise by speaking TAGL ourselves.**
-
-**Engineering Excellence in the `tagd` enterprise means speaking TAGL end-to-end and preserving one consistent model of truth across the entire system: input in TAGL, processing in TAGL, output in TAGL, errors in TAGL, logs in TAGL, web-service mappings in TAGL, and eventually apps generated from TAGL.**
-
-**Consistency is safety. Consistency is correctness. Consistency is how truth survives across semantics, ontology, code, data, tests, documentation, and process.**
-
-It means:
+In practice:
 
 * correctness before convenience
 * clear boundaries and explicit contracts
-* meaningful, reviewable batches organized around one deliverable feature or contract
+* one meaningful, reviewable batch per deliverable feature or contract
 * deterministic behavior and reproducible verification
-* strong alignment between doctrine, code, tests, build rules, and documentation
-* process improvement as part of delivery, not a separate activity
-* semantic, ontological, and system consistency across the enterprise
-* using TAGL as the native language of the enterprise rather than translating truth into disconnected side systems
+* alignment between doctrine, code, tests, build rules, and documentation
+* process improvement captured in repo artifacts when recurring friction appears
 
-Engineering Excellence is not polish for its own sake.
-It is disciplined, pragmatic software engineering that improves the system and the way we work on the system.
+Consistency is safety. A shorter path to the same truth is usually the better one.
 
 ### Respect For Human Time
 
-Human time is scarce. Agent output is cheap. The burden is on the agent to spend more machine effort so the human spends less life parsing noise.
+Human time is scarce. Agent output is cheap.
 
-This means:
+Prefer:
 
-* concise by default
-* dense with signal, not padded with repetition
-* no transient context embedded into durable documents
-* no restating canonical instructions owned by another source document
-* no speculative detail when the task only needs requirements, verification, and acceptance
-* enough detail when needed, but never more than needed
-
-If a document can be made shorter without losing truth, clarity, or utility, it should be made shorter.
+* concise instructions
+* one canonical source for each rule
+* no transient context in durable documents
+* no repeated guidance across doctrine, task files, and reports
+* enough detail to act, not enough detail to restate the obvious
 
 ## Command Structure
 
@@ -56,8 +44,6 @@ If a document can be made shorter without losing truth, clarity, or utility, it 
 * The LLM defines what must be true.
 * The Coding Agent decides how to make it true.
 
----
-
 ## Responsibilities
 
 ### Chat / LLM
@@ -68,10 +54,9 @@ If a document can be made shorter without losing truth, clarity, or utility, it 
 - Review diffs: boundaries, coupling, test quality, naming
 - Issue the next mission based on review
 - Improve the process itself when patterns, friction, or recurring ambiguity are discovered
-- Uphold Engineering Excellence at the level of mission design, review quality, and enduring repo guidance
+- Uphold Engineering Excellence in mission design and enduring repo guidance
 
-The LLM operates at **architectural altitude**.  
-It should not choreograph internal code moves unless correcting a specific known mistake.
+The LLM operates at architectural altitude. It defines the contract, not the internal code choreography.
 
 ### Coding Agent
 - Read and inspect the code
@@ -83,23 +68,16 @@ It should not choreograph internal code moves unless correcting a specific known
 - Recommend process or documentation improvements when recurring weaknesses become visible
 - Uphold Engineering Excellence in implementation quality, verification discipline, and reviewability
 
-The Coding Agent operates at **implementation altitude**.  
-It should decide *how* to do the work within the given boundaries.
-It should complete the smallest meaningful, testable batch, not the smallest isolated edit.
+The Coding Agent operates at implementation altitude. It decides how to do the work and should complete the smallest meaningful, testable batch, not the smallest isolated edit.
 
 ### Repo Artifacts
 - Carry enduring doctrine so prompts stay short
 - Define required behavior via tests
 - Encode naming conventions, module boundaries, and design intent
 - Preserve process memory: templates, reports, lessons learned, and reusable guidance should accumulate here rather than being rediscovered each time
-- Serve Engineering Excellence by making good practice easier to repeat than bad practice
-- Help the enterprise keep speaking one language of truth instead of fragmenting across code, tools, and documentation
-
----
+- Make good practice easier to repeat than bad practice
 
 ## Process Improvement
-
-Good task execution should improve not only the code, but also the way the team works.
 
 When a task reveals recurring friction, ambiguity, or waste, capture the improvement close to the source of truth:
 
@@ -109,25 +87,11 @@ When a task reveals recurring friction, ambiguity, or waste, capture the improve
 * repeated build/test breakage -> build scripts, test targets, or workspace-path guidance
 * repeated architecture misunderstanding -> README, AGENTS, architecture notes, or focused reports
 
-Prefer concise durable process improvements over broad meta-discussion.
-
-Engineering Excellence applies here too:
-delivery is not complete when the code change lands but the same avoidable confusion remains in the workflow.
-If we keep rediscovering the same truth instead of capturing it once in TAGL, tests, templates, or doctrine, we are not yet operating with Engineering Excellence.
-
-If a process improvement is proposed, it should be:
-
-* grounded in evidence from the current work
-* written as a reusable rule, template improvement, or documentation addendum
-* kept separate from speculative organizational philosophy
-
----
+Prefer concise durable improvements over broad meta-discussion.
 
 ## Self Learning
 
-Agents should treat each task as a chance to improve future judgment.
-
-This does not mean inventing new doctrine on every turn. It means:
+Treat each task as a chance to improve future judgment without inventing new doctrine on every turn. Useful learning looks like:
 
 * noticing repeated failure modes
 * extracting reusable lessons from completed work
@@ -135,28 +99,15 @@ This does not mean inventing new doctrine on every turn. It means:
 * making future prompts shorter, clearer, and less error-prone
 * reducing avoidable context reload and micro-iteration churn
 
-Useful self-learning outputs include:
-
-* improved task templates
-* sharper acceptance criteria
-* better test expectations
-* clearer archive classifications
-* more precise terminology for recurring engineering concepts
-* better alignment between TAGL, code structure, logs, errors, and documentation
-
-The standard for self-learning is pragmatic usefulness:
+The standard is pragmatic usefulness:
 
 > If the next agent reads the updated artifact, will it make the next iteration clearer, safer, or faster?
 
-If yes, the learning is worth capturing.
-
-That is Engineering Excellence expressed as organizational memory.
-
----
+If yes, capture it.
 
 ## Prompt Doctrine
 
-A good Coding Agent prompt usually contains a small set of core elements:
+A good task document usually contains:
 
 ```
 # Task
@@ -170,24 +121,7 @@ A good Coding Agent prompt usually contains a small set of core elements:
 * preserve behavior
 * keep diff scoped and reviewable
 * no new dependencies
-* follow AGENTS.md
-* follow interruptions introduced by user
-  + comments or deleted code become design imperatives or contracts
-  - do not fix broken code by reverse breaking changes introduced by user
-  + do fix broken code by TDD (design by contract):
-    1) write test according to new suggested change to design or behavior
-    2) redesign/refactor around new tests and breaking changes
-    3) pass tests according to new design/behaviour
 * update tests as needed
-
-
-### Interruptions by User
-  + user comments or deleted code become design imperatives or contracts
-  - do not fix broken code by reverse breaking changes introduced by user
-  + do fix broken code by TDD (design by contract):
-    1) write test according to new suggested change to design or behavior
-    2) redesign/refactor around new tests and breaking changes
-    3) pass tests according to new design/behaviour
 
 ## Acceptance criteria
 * boundary condition
@@ -200,20 +134,7 @@ A good Coding Agent prompt usually contains a small set of core elements:
 3. open concerns
 ```
 
-Those elements are usually enough.
-
-Keep prompts and task documents short unless depth is truly required.
-Do not dump gathered context into a durable artifact just because it is available.
-Reference source documents; do not cheaply paraphrase them into longer, weaker copies.
-Specify one meaningful deliverable feature or contract per iteration.
-Prefer the smallest batch that completes and proves that deliverable, even when it requires several naturally related edits.
-Do not bias toward micro-iterations that fragment one coherent change across multiple turns.
-
-For the `tagd` enterprise, a good prompt should also preserve one more invariant:
-
-* the task should strengthen, or at least not weaken, the consistent TAGL-centered model of truth across the stack
-
----
+Those elements are usually enough. Keep task documents short unless depth is required, and avoid restating repo-global rules in task-local prose.
 
 ## What to Avoid
 
@@ -226,8 +147,6 @@ For the `tagd` enterprise, a good prompt should also preserve one more invariant
 | Speculative architecture in a refactor prompt | Invites scope creep |
 
 **Less is more.** A short, scannable prompt is faster for humans and more decisive for agents.
-
----
 
 ## Working Cycle
 
@@ -250,16 +169,7 @@ When a task explicitly requires TDD sequencing, state the order:
 
 When several edits naturally belong to one testable feature or contract, keep them in the same iteration instead of splitting them into artificial micro-steps.
 
-If a repo defines `make all` as the completion command, `make all` must run the
-full required suite, not just build artifacts.
-
-Prefer repo-owned local fixtures for normal tests over external mutable data
-files. Use external files only for explicit integration coverage.
-
-Prefer solutions that keep the enterprise speaking TAGL directly over solutions
-that introduce parallel ad hoc representations without necessity.
-
-Mark aggregate make targets like `all`, `tests`, and `clean` as `.PHONY`.
+If a repo defines `make all` as the completion command, it must run the required suite, not just build artifacts.
 
 Implement the specified external contract directly.
 Do not preserve wrong internal formats and compensate for them in downstream code or tests.
