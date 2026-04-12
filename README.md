@@ -15,3 +15,9 @@ Start with translating the VOA Wordbook dictionary into TAGL.
 ## Instructions
 
 Read `README.md`
+
+## Reports
+
+* `out/` is for working reports, status notes, and temporary analysis artifacts.
+* If a report contains durable process guidance, propose promoting it into
+  `docs/*` or task templates rather than leaving doctrine only in `out/`.

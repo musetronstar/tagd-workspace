@@ -28,4 +28,15 @@ Use `code` backticks around
 
 Use triple backticks with a language specifier.
 
+## Naming
+
+Name by domain role, not temporary representation.
+
+Do not pollute semantics with artifacts from context such as:
+
+* storage types
+* refactor scaffolding
+* temporary migration names
+
+Remove temporary scaffolding names before task closeout.
 
