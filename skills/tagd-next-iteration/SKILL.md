@@ -12,10 +12,7 @@ Propose exactly one meaningful next iteration for `~next`.
 * Inspect current worktree state.
 * Inspect active task context.
 * Check `out/` only if it clarifies the latest completed slice.
-* Check whether the candidate slice is already complete in code, tests, or commits.
-* If the active `TASKS.d/` task is complete, do not invent more work; provide a `task complete` report.
-* If complete, do not emit it as `~next`; report completion or propose the next unfinished batch.
-* Do not restate the active `TASKS.d/` task unless the subtask adds real new narrowing.
+* If active task is complete, do not emit it as `~next`; do not invent more work; provide a `task complete` report.
 * Name the repo that owns the proposed changes.
 * Infer the smallest meaningful reviewable TDD batch from the current checkpoint.
 * Prefer one deliverable feature, seam, or contract that can be proved in one iteration.
