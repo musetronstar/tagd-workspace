@@ -86,6 +86,7 @@ Follow `docs/ai-assisted-dev-doctrine.md`
 * `tagd/tagsh/tests/tester.exp` is measurably more readable because lower-layer contracts no longer dominate it
 * logger and parser ownership is clearer because tests for those behaviors live primarily in `tagd` and `tagl` respectively
 * expect coverage remains only where spawned process or terminal behavior is the actual contract under test
+* if the next step is polish rather than acceptance, stop and file tech debt
 
 ## Deliverable: Concise Report
 
