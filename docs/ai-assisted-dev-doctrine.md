@@ -18,7 +18,7 @@ It means:
 
 * correctness before convenience
 * clear boundaries and explicit contracts
-* small reviewable changes
+* meaningful, reviewable batches organized around one deliverable feature or contract
 * deterministic behavior and reproducible verification
 * strong alignment between doctrine, code, tests, build rules, and documentation
 * process improvement as part of delivery, not a separate activity
@@ -85,6 +85,7 @@ It should not choreograph internal code moves unless correcting a specific known
 
 The Coding Agent operates at **implementation altitude**.  
 It should decide *how* to do the work within the given boundaries.
+It should complete the smallest meaningful, testable batch, not the smallest isolated edit.
 
 ### Repo Artifacts
 - Carry enduring doctrine so prompts stay short
@@ -108,7 +109,7 @@ When a task reveals recurring friction, ambiguity, or waste, capture the improve
 * repeated build/test breakage -> build scripts, test targets, or workspace-path guidance
 * repeated architecture misunderstanding -> README, AGENTS, architecture notes, or focused reports
 
-Prefer small durable process improvements over broad meta-discussion.
+Prefer concise durable process improvements over broad meta-discussion.
 
 Engineering Excellence applies here too:
 delivery is not complete when the code change lands but the same avoidable confusion remains in the workflow.
@@ -132,6 +133,7 @@ This does not mean inventing new doctrine on every turn. It means:
 * extracting reusable lessons from completed work
 * feeding those lessons back into repo artifacts
 * making future prompts shorter, clearer, and less error-prone
+* reducing avoidable context reload and micro-iteration churn
 
 Useful self-learning outputs include:
 
@@ -166,7 +168,7 @@ A good Coding Agent prompt usually contains a small set of core elements:
 
 ## Constraints
 * preserve behavior
-* keep diff small and reviewable
+* keep diff scoped and reviewable
 * no new dependencies
 * follow AGENTS.md
 * follow interruptions introduced by user
@@ -203,6 +205,9 @@ Those elements are usually enough.
 Keep prompts and task documents short unless depth is truly required.
 Do not dump gathered context into a durable artifact just because it is available.
 Reference source documents; do not cheaply paraphrase them into longer, weaker copies.
+Specify one meaningful deliverable feature or contract per iteration.
+Prefer the smallest batch that completes and proves that deliverable, even when it requires several naturally related edits.
+Do not bias toward micro-iterations that fragment one coherent change across multiple turns.
 
 For the `tagd` enterprise, a good prompt should also preserve one more invariant:
 
@@ -233,7 +238,8 @@ For the `tagd` enterprise, a good prompt should also preserve one more invariant
 4. LLM writes the next short mission
 ```
 
-One mission per step. No all-in-one redesign prompts unless a full redesign is the intent.
+One meaningful mission per step. No all-in-one redesign prompts unless a full redesign is the intent.
+Each mission should usually complete one reviewable feature, seam, or contract.
 
 When a task explicitly requires TDD sequencing, state the order:
 
@@ -241,6 +247,8 @@ When a task explicitly requires TDD sequencing, state the order:
 2. implementation to pass those tests
 3. system tests second
 4. task is not complete until all required test layers pass
+
+When several edits naturally belong to one testable feature or contract, keep them in the same iteration instead of splitting them into artificial micro-steps.
 
 If a repo defines `make all` as the completion command, `make all` must run the
 full required suite, not just build artifacts.

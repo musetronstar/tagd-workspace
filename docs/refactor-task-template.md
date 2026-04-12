@@ -25,7 +25,7 @@ Follow `docs/ai-assisted-dev-doctrine.md`
 
 ## Design Principles
 
-* Think small: prefer one reviewable improvement at a time.
+* Work in the smallest meaningful batch that completes one reviewable feature, seam, or contract.
 * Preserve behavior while improving structure unless the task explicitly changes behavior.
 * Respect the existing external contract first: parser contract, CLI surface, file formats, and test expectations.
 * Prefer deterministic outputs, deterministic tests, and explicit tie-breakers in tooling.
@@ -38,7 +38,8 @@ Follow `docs/ai-assisted-dev-doctrine.md`
 ## Constraints
 
 * preserve behavior unless the task explicitly says otherwise
-* keep diff small, reviewable, and local to the stated scope
+* keep diff scoped, reviewable, and local to the stated scope
+* do not split naturally related edits when they are needed to complete one tested deliverable
 * no new dependencies unless explicitly requested
 * follow priority
   1. user prompts
@@ -58,7 +59,7 @@ Follow `docs/ai-assisted-dev-doctrine.md`
 
 ## Tests
 
-* write or update tests at the boundary that proves the requested change
+* write or update tests at the boundary that proves the requested feature or contract
 * prefer fast in-process tests first, system tests second when CLI or process behavior matters
 * modified code must be tested
 * state the exact command(s) required for task completion

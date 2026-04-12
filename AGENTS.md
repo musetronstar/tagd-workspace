@@ -15,17 +15,18 @@ If the user explicitly provides the task to follow, use that instead.
 
 ## Meta Commands
 
-* `~next` asks for the next small TDD iteration from the current checkpoint.
+* `~next` asks for the next meaningful TDD iteration from the current checkpoint.
 * `~status` asks for worktree status and checkpoint readiness.
 * `~/...` is a home-directory path prefix, not a meta-command.
 
 ## Workflow
 
-* Work in small, reviewable steps.
-* Prefer test first, then the smallest code change.
-* Build and test after each change.
+* Work in reviewable, feature-sized batches.
+* Prefer test first, then the smallest meaningful batch that completes one deliverable feature or contract.
+* Build and test after each meaningful batch.
 * Preserve existing style on untouched lines.
 * Do not reformat unrelated code.
 * Do not alter comments or remove commented-out blocks unless asked.
-* Keep diffs minimal.
+* Keep diffs scoped and reviewable.
+* Do not split naturally related changes into tiny sub-steps when they belong to one tested deliverable.
 * If a line does not need to change, leave it alone.
