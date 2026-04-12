@@ -242,7 +242,8 @@ object_list ::= object_list ',' object
 object_list ::= object
 
 object ::= TAG
-object ::= TAG "=" QUANTIFIER
+object ::= TAG "=" INTEGER
+object ::= TAG "=" FLOAT
 object ::= TAG "=" STRING
 ```
 
@@ -263,6 +264,49 @@ get_statement ::= "<<" subject
 query_statement ::= "??" interrogator predicates
 query_statement ::= "??" "<search terms>"
 ```
+
+#### 5.6 Numeric Literal Examples
+
+##### Modifier Context
+
+```tagl
+-- integer modifiers
+>> dog _is_a mammal
+    _has legs = 4, weight = 23;
+
+>> rectangle _is_a shape
+    _has width = 10, height = 5;
+
+>> temperature _is_a measurement
+    _has value = -23, threshold = 0;
+
+-- float modifiers
+>> circle _is_a shape
+    _has radius = 3.14;
+
+>> water _is_a substance
+    _has boiling_point = 100.0, freezing_point = 0.0;
+```
+
+##### Literal Expression Statements
+
+Bare numeric literals terminated by `;` or double newline.
+In tagsh these echo the value. In a file context the value is legal but silent.
+
+```tagl
+1;
+-23;
+0;
+3.14;
+-1.0;
+0.0;
+```
+
+##### Notes
+
+* a bare literal expression statement requires a new grammar rule in `parser.y`
+* `TOK_FLOAT` rule MUST precede `TOK_INTEGER` in the scanner
+* scientific notation is DEFERRED
 
 ## 6. Semantic Model
 
