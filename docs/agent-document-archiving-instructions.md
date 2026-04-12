@@ -1,6 +1,6 @@
 # Task
 
-I added target archive directories where I wanted completed files moved.
+I added target archive directories where I want completed files moved.
 I then want an assessment of completed tasks, relevent generated documents, and tasks left to complete.
 
 **Engineering Excellence**
@@ -10,6 +10,13 @@ I then want an assessment of completed tasks, relevent generated documents, and 
 * **We eat our own dogfood**: if TAGL, code, tests, and reports disagree, resolve the status by inspecting the actual truth-bearing artifacts.
 
 ## Directories
+
+### Read
+
+* All files and directories recursivly in `./`
+* Including all git worktree directories in README.md
+
+## Read / Write
 
     TASKS.d/     # agent tasks markdown files
     out/         # generated reports by agents
@@ -61,7 +68,7 @@ Do not move a file if it is not **fully addressed** or **no-longer-relevant**.
 
 For <target_file> in each target_directory:
   Understand the task or report in the <target_file>
-  [take note for report]
+  [take notes for report]
   Inspect files referenced in the <target_file>
   Inspect the  commit histories and diffs of <target_file> relevant to the task or report
   [take note for report]
@@ -86,9 +93,9 @@ Write the `.md` report in `out/` consistent with our naming conventions.
 
 2. **Map** all the expanded topics together with links of association
 
-3. **Reduce** bring all content together, grouped by topic and filtered into conscise **impact statements** grouped and ordered by **topic**
+3. **Reduce** consolodate all content together, grouped by topic and filtered into conscise **impact statements** grouped and ordered by **topic**
 
 4. Generate markdown report of highly condensed, non-repetitive - containing sections
 1. after action report, status of the project as **impact statements by topic**
-2. well organized document of actionable intelligence of **impact statements by topic** within the context and mission of reaching project (tagd-workspace) goal and applying lessons learned.
+2. well organized document of actionable intelligence of **impact statements by topic** within the context and mission of reaching project (tagd-workspace) goals while applying lessons learned.
 3. Conclude with a list of tasks to be complete as **impact statements by topic**
