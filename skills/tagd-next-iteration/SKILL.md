@@ -7,11 +7,14 @@ description: Use when the user asks "what's next", says ~next, asks for the next
 
 Propose exactly one meaningful next iteration for `~next`.
 
+## Definitions
+
+Active Task: The latest task in `TASKS.d`; If not clear, ask the user to clarify.
+
 ## Rules
 
 * Inspect current worktree state.
 * Inspect active task context.
-* Check `out/` only if it clarifies the latest completed slice.
 * If active task is complete, do not emit it as `~next`; do not invent more work; provide a `task complete` report.
 * Name the repo that owns the proposed changes.
 * Infer the smallest meaningful reviewable TDD batch from the current checkpoint.
