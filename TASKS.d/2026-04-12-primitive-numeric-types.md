@@ -1,8 +1,11 @@
 # Task
 
-Introduce `_integer` and `_float` as primitive numeric hard tags and replace
-the single `TOK_QUANTIFIER` scanner token with distinct `TOK_INTEGER` and
-`TOK_FLOAT` tokens. Rename `TYPE_TEXT` to `TYPE_STRING` in `data_t`. Update
+Introduce `_integer` and `_float` as primitive numeric hard tags and split
+the single `TOK_QUANTIFIER` scanner token into two distinct numbers: `TOK_INTEGER` and
+`TOK_FLOAT` tokens. `TOK_QUANTIFIER` is going away, but parser
+production `quantifier` will hold its slot in the parser position.
+
+Rename `TYPE_TEXT` to `TYPE_STRING` in `data_t`. Update
 `TAGL-spec.md` to document primitive types. All existing behavior that
 depended on `TOK_QUANTIFIER` must be preserved under the new tokens.
 
@@ -86,11 +89,21 @@ Follow `docs/ai-assisted-dev-doctrine.md`
 * the `TOK_FLOAT` scanner rule MUST precede the `TOK_INTEGER` rule
 * `"-23"` MUST be scanned as a single `TOK_INTEGER` token; `"-1.0"` as a
   single `TOK_FLOAT` token
-* `TOK_QUANTIFIER` must be fully replaced — no references may remain
+* `TOK_QUANTIFIER` scanner token must be replaced by `TOK_INTEGER` and
+  `TOK_FLOAT` — no scanner references may remain
 * `TYPE_TEXT` must be fully replaced by `TYPE_STRING` — no references may
   remain
 * the `boolean_value` grammar rule currently uses `TOK_QUANTIFIER`; update
   it to `TOK_INTEGER` and preserve its behavior
+* `quantifier` MUST be preserved as a named grammar production in `parser.y`
+  — it is a meaningful semantic seam reserved for future design. It MUST
+  reduce from `TOK_INTEGER` and `TOK_FLOAT` and feed into `rhs_object`:
+  ```
+  quantifier(q) ::= INTEGER(I) . { q = I; }
+  quantifier(q) ::= FLOAT(F) .   { q = F; }
+  rhs_object(o) ::= quantifier(q) . { o = q; }
+  ```
+  declare `%type quantifier { TAGL::TokenText }` accordingly
 * modifier comparison in `tagd.cc` (`cmp_modifier_lt`, `cmp_modifier_eq`)
   must remain semantically unchanged
 * do not silently broaden scope if a missing prerequisite is discovered —
@@ -118,7 +131,8 @@ Update `docs/TAGL-spec.md`:
 
 ## Acceptance Criteria
 
-* `TOK_QUANTIFIER` does not appear anywhere in the codebase
+* `TOK_QUANTIFIER` does not appear anywhere in the codebase (scanner only —
+  the `quantifier` grammar production is preserved and required)
 * `TYPE_TEXT` does not appear anywhere in the codebase
 * `HARD_TAG_NUMBER`, `HARD_TAG_INTEGER`, `HARD_TAG_FLOAT` defined in
   `hard-tags.h` in a `/***** primitive types *****/` section after relators,
