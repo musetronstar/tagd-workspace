@@ -89,7 +89,8 @@ UTF-8 labels \cite{readme}. A tag carries two distinct identities:
 \begin{itemize}
   \item \textbf{Nominal identity}: a globally unique UTF-8 label.
   \item \textbf{Structural identity}: its position in the tagspace hierarchy,
-        defined by its subordinate relation and predicate list \cite{spec}.
+        given by its rank, defined by its subordinate relation (aka identity
+        relation) \cite{spec}.
 \end{itemize}
 
 \begin{definition}[Tag Set]
@@ -454,6 +455,23 @@ _entity _sub _entity
 
 \section{Predicates: Fibered Structure}
 
+\subsection{Relators Are Tags}
+
+Crucially, relators are themselves tags --- subordinate to \texttt{\_rel} in
+the tagspace tree. This means predicates are not outside the system; they are
+\emph{inside} it. The tagspace is self-describing.
+
+From the bootstrap dump \cite{bootstrap}:
+\begin{verbatim}
+_rel     rank: 2        (root of all relators)
+_has     rank: 2.1
+_can     rank: 2.2
+_refers  rank: 2.3
+\end{verbatim}
+
+The language used to attach meaning to tags is itself expressed in the same
+structural language.
+
 \subsection{Predicates as Horizontal Relations}
 
 Predicates are relations attached to a tag that do not alter its position in
@@ -496,23 +514,6 @@ class abstract_tag {
     predicate_set relations;   // fiber: additional data at this point
 };
 \end{lstlisting}
-
-\subsection{Relators Are Tags}
-
-Crucially, relators are themselves tags --- subordinate to \texttt{\_rel} in
-the tagspace tree. This means predicates are not outside the system; they are
-\emph{inside} it. The tagspace is self-describing.
-
-From the bootstrap dump \cite{bootstrap}:
-\begin{verbatim}
-_rel     rank: 2        (root of all relators)
-_has     rank: 2.1
-_can     rank: 2.2
-_refers  rank: 2.3
-\end{verbatim}
-
-The language used to attach meaning to tags is itself expressed in the same
-structural language.
 
 \section{Structural Identity}
 
