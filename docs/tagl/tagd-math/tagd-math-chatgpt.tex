@@ -320,65 +320,119 @@ has a unique path to the root.
 
 \subsection{Motivation}
 
-The tagspace is already a set, a rooted tree, and a partially ordered set.
-This suggests a further mathematical question:
-
-\begin{quote}
-Can the containership structure of a tagspace be described topologically?
-\end{quote}
-
-The answer is yes. A natural topology arises from the order structure.
-
-\subsection{Alexandrov Topology}
-
-Any partial order induces an Alexandrov topology.
-
-\begin{definition}
-Let $(T,\leq)$ be the specialization order above. A subset
-$U \subseteq T$ is open if
-\[
-x \in U \text{ and } x \leq y \implies y \in U
-\]
-for all $x,y \in T$.
-\end{definition}
-
-These are the upward-closed sets with respect to the order $\leq$.
-Because $\leq$ means ``more specific than,'' an upward-closed set contains
-everything more general than any tag it already contains.
-
-Equivalently, if one prefers to work with the containership order
-$\preceq$, one can use the dual presentation in which descendant-closed
-subtrees play the role of basic open sets.
-
-\subsection{Why This Fits Tagd}
-
-The topology is not arbitrary. It is induced by the same structural facts
-already present in the source:
+The tagspace is already:
 
 \begin{itemize}
-    \item ranks define a prefix order
-    \item prefix order defines containment
-    \item containment defines subtrees
-    \item subtree behavior is closed under the natural set operations of the tree
+    \item a set $T$
+    \item a rooted tree defined by subordinate relations
+    \item a partially ordered set under rank-prefix containment
 \end{itemize}
 
-\subsection{Topological Intuition}
+This naturally induces a topology. The goal of this section is to define
+that topology precisely and consistently.
 
-In a tagspace, generalization and specialization propagate structurally.
+\subsection{Specialization Order (Canonical Choice)}
+
+We define the order in terms of specialization:
+
+\begin{definition}
+For $a,b \in T$,
+\[
+a \leq b \quad \Longleftrightarrow \quad \mathrm{rank}(b)
+\text{ is a prefix of } \mathrm{rank}(a)
+\]
+\end{definition}
+
+Interpretation:
+
+\begin{itemize}
+    \item $a \leq b$ means $a$ is more specific than $b$
+    \item $b$ is more general than $a$
+    \item moving upward in the order moves toward generalization
+\end{itemize}
 
 Example:
 
 \begin{verbatim}
->> animal _type_of living_thing
->> mammal _type_of animal
 >> dog _is_a mammal
+>> mammal _type_of animal
 \end{verbatim}
 
-Then $dog \leq mammal \leq animal \leq living\_thing$.
+\[
+dog \leq mammal \leq animal
+\]
 
-This means that moving upward in the order moves toward more general
-structure. In this sense, the topology encodes the taxonomic shape of the
-tagspace.
+\subsection{Alexandrov Topology}
+
+\begin{definition}
+A subset $U \subseteq T$ is open if:
+\[
+x \in U \text{ and } x \leq y \implies y \in U
+\]
+\end{definition}
+
+That is, $U$ is upward-closed with respect to the specialization order.
+
+\subsection{Interpretation}
+
+Because $x \leq y$ means "$x$ is more specific than $y$":
+
+\begin{itemize}
+    \item if a tag is in $U$, all more general tags are also in $U$
+    \item open sets propagate upward toward generalization
+\end{itemize}
+
+Example:
+
+If $dog \in U$, then:
+
+\[
+mammal, animal, \_entity \in U
+\]
+
+\subsection{Dual View (Subtree Interpretation)}
+
+While the topology is defined using the specialization order, it can be
+understood more intuitively in terms of the tree structure.
+
+Define the subtree of a tag:
+
+\[
+\mathrm{Subtree}(x) = \{ y \in T \mid x \preceq y \}
+\]
+
+where $x \preceq y$ means $x$ is an ancestor of $y$.
+
+These subtrees correspond to downward-closed sets in the tree.
+
+\begin{remark}
+The Alexandrov topology defined above is the dual of the subtree
+containment structure. Both views arise from the same rank-prefix relation.
+\end{remark}
+
+\subsection{Topological Properties}
+
+The topology satisfies:
+
+\begin{itemize}
+    \item arbitrary unions of open sets are open
+    \item finite intersections of open sets are open
+    \item $\varnothing$ and $T$ are open
+\end{itemize}
+
+Therefore, it defines a valid topology on $T$.
+
+\subsection{Structural Meaning}
+
+The topology encodes generalization and specialization:
+
+\begin{itemize}
+    \item moving upward in the order corresponds to generalization
+    \item open sets capture closure under generalization
+\end{itemize}
+
+Thus, the topology is not an external addition. It is a direct
+mathematical expression of the structure already present in the tagspace.
 
 \section{Hard Tags as a Universal Invariant Substructure}
 
