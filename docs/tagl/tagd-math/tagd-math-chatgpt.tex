@@ -1,0 +1,577 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\title{tagd Math}
+\author{Isaac N Colley}
+\date{April 2026}
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{remark}{Remark}[section]
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+This document describes the mathematical structures already present in the
+\texttt{tagd} semantic-relational system and the TAGL language specification.
+Its purpose is not to invent a new mathematical model, but to state, as
+precisely as possible, the mathematics implicit in the current source and
+specification.
+
+The central claim is that a tagspace is not merely a collection of labels.
+It has mathematical structure. In particular, a tagspace exhibits at least
+the following:
+
+\begin{itemize}
+    \item a set of tags
+    \item a rooted tree induced by subordinate relations
+    \item a rank-based containership relation
+    \item a partial order induced by rank-prefix containment
+    \item additional labeled relations on nodes through predicates
+\end{itemize}
+
+These structures support the broader thesis that in \texttt{tagd},
+information is structural: meaning is determined not only by nominal labels,
+but by position in the hierarchy and by relations attached to that position.
+
+\section{Preliminaries}
+
+\subsection{Tags as a Set}
+
+\begin{definition}
+Let $T$ be the set of all tags in a tagspace.
+\end{definition}
+
+Each tag has two forms of identity:
+
+\begin{enumerate}[label=\arabic*.]
+    \item \textbf{Nominal identity}: a globally unique UTF-8 text label.
+    \item \textbf{Structural identity}: its subordinate relation and its
+    predicate list.
+\end{enumerate}
+
+Example TAGL statements:
+
+\begin{verbatim}
+>> mammal _type_of animal
+
+>> dog _is_a mammal
+\end{verbatim}
+
+Here, \texttt{dog}, \texttt{mammal}, and \texttt{animal} are all elements of
+$T$.
+
+\subsection{Subordinate Relations}
+
+\begin{definition}
+A subordinate relation is a binary relation on tags:
+\[
+\mathrel{\_sub} \subseteq T \times T
+\]
+where $(a,b) \in \mathrel{\_sub}$ means that tag $a$ is subordinate to tag $b$.
+\end{definition}
+
+In TAGL surface syntax, subordinate relations may be written using
+particular sub-relators such as \texttt{\_sub}, \texttt{\_is\_a}, or
+\texttt{\_type\_of}. The general structural role is the same: a subject is
+placed under a super-object in the tagspace hierarchy.
+
+Example:
+
+\begin{verbatim}
+>> dog _is_a mammal
+\end{verbatim}
+
+\section{Tagspace as a Rooted Tree}
+
+\subsection{Root}
+
+\begin{definition}
+There exists a distinguished root tag
+\[
+\_entity \in T
+\]
+which is axiomatic.
+\end{definition}
+
+The root relation is:
+
+\begin{verbatim}
+_entity _sub _entity
+\end{verbatim}
+
+This makes \texttt{\_entity} the unique root of the tagspace.
+
+\subsection{Parent Function}
+
+Because each tag has exactly one subordinate relation, each non-root tag has
+exactly one parent in the hierarchy.
+
+\begin{definition}
+Define the parent function
+\[
+\mathrm{parent}: T \to T
+\]
+such that
+\[
+\mathrm{parent}(a) = b
+\]
+whenever $a$ is subordinate to $b$.
+\end{definition}
+
+\begin{proposition}
+The subordinate structure of a tagspace forms a rooted tree.
+\end{proposition}
+
+\begin{proof}
+Each tag has exactly one subordinate relation, and all tags ultimately
+descend from the distinguished root $\_entity$. Therefore the hierarchy has
+a unique root and unique parent assignment for each node, which is exactly
+the defining shape of a rooted tree.
+\end{proof}
+
+\subsection{Example}
+
+\begin{verbatim}
+>> physical_object -^ _entity
+>> living_thing _type_of physical_object
+>> animal _type_of living_thing
+>> mammal _type_of animal
+>> dog _is_a mammal
+\end{verbatim}
+
+This yields the tree fragment
+
+\[
+\_entity \leftarrow physical\_object \leftarrow living\_thing \leftarrow
+animal \leftarrow mammal \leftarrow dog
+\]
+
+where arrows point from child to parent.
+
+\section{Rank and Containership}
+
+\subsection{Rank Function}
+
+In \texttt{tagd}, each tag has a rank. A rank is a UTF-8 byte string whose
+prefixes encode containership in the tree.
+
+\begin{definition}
+Define a rank function
+\[
+\mathrm{rank}: T \to \Sigma^{*}
+\]
+where $\Sigma^{*}$ is the set of finite UTF-8 strings.
+\end{definition}
+
+The intended semantics are:
+
+\begin{itemize}
+    \item the rank of a parent is a prefix of the rank of each descendant
+    \item rank substrings define subtrees
+    \item lexicographic collation of rank strings preserves hierarchy
+\end{itemize}
+
+\subsection{Containership Relation}
+
+\begin{definition}
+Define containership on tags by
+\[
+b \preceq a \quad \Longleftrightarrow \quad \mathrm{rank}(b)
+\text{ is a prefix of } \mathrm{rank}(a)
+\]
+\end{definition}
+
+This means that $b$ contains $a$ in the hierarchical sense: $a$ lies in the
+subtree rooted at $b$.
+
+\begin{remark}
+This is the mathematical form of the source-level intuition:
+a parent rank prefixes all ranks in its subtree.
+\end{remark}
+
+\subsection{Example}
+
+Suppose the ranks are:
+
+\[
+\mathrm{rank}(\_entity)=\epsilon,\quad
+\mathrm{rank}(mammal)=1.2.4,\quad
+\mathrm{rank}(dog)=1.2.4.7
+\]
+
+Then $\mathrm{rank}(mammal)$ is a prefix of $\mathrm{rank}(dog)$, so
+$mammal \preceq dog$.
+
+\section{Tagspace as a Partially Ordered Set}
+
+\subsection{Specialization Order}
+
+There are two equivalent ways to orient the order. For language design,
+the most useful one is usually the specialization order.
+
+\begin{definition}
+Define
+\[
+a \leq b \quad \Longleftrightarrow \quad \mathrm{rank}(b)
+\text{ is a prefix of } \mathrm{rank}(a)
+\]
+\end{definition}
+
+Interpretation:
+
+\begin{itemize}
+    \item $a \leq b$ means $a$ is subordinate to $b$
+    \item $a$ is more specific than $b$
+    \item $b$ is more general than $a$
+\end{itemize}
+
+\begin{proposition}
+$(T,\leq)$ is a partially ordered set.
+\end{proposition}
+
+\begin{proof}
+\textbf{Reflexive:} Every rank is a prefix of itself, so $a \leq a$.
+
+\textbf{Transitive:} If $\mathrm{rank}(b)$ is a prefix of
+$\mathrm{rank}(a)$ and $\mathrm{rank}(c)$ is a prefix of
+$\mathrm{rank}(b)$, then $\mathrm{rank}(c)$ is a prefix of
+$\mathrm{rank}(a)$, so $a \leq c$.
+
+\textbf{Antisymmetric:} If $a \leq b$ and $b \leq a$, then each rank is a
+prefix of the other, hence the ranks are equal. In a tagspace, equal
+structural position implies the same node in the tree, so $a=b$.
+\end{proof}
+
+\subsection{Interpretation}
+
+This partial order is not added from outside. It is already present in the
+system through rank-prefix containment. It formalizes the intuition that
+the tagspace expresses a hierarchy of specialization and generalization.
+
+\section{Subtrees and Set-Theoretic Structure}
+
+\subsection{Subtrees as Sets}
+
+Given any tag $x \in T$, define its subtree by
+
+\[
+\mathrm{Subtree}(x) = \{ y \in T \mid x \preceq y \}
+\]
+
+This is the set of all descendants of $x$, including $x$ itself.
+
+\subsection{Examples}
+
+If the tagspace contains:
+
+\begin{verbatim}
+>> animal _type_of living_thing
+>> mammal _type_of animal
+>> bird _type_of animal
+>> dog _is_a mammal
+>> cat _is_a mammal
+\end{verbatim}
+
+then
+
+\[
+\mathrm{Subtree}(animal)
+=
+\{animal, mammal, bird, dog, cat, \dots \}
+\]
+
+and
+
+\[
+\mathrm{Subtree}(mammal)
+=
+\{mammal, dog, cat, \dots \}
+\]
+
+\subsection{Intersection Behavior}
+
+For two tags $x,y \in T$, the intersection
+\[
+\mathrm{Subtree}(x) \cap \mathrm{Subtree}(y)
+\]
+is either:
+
+\begin{itemize}
+    \item empty, if the subtrees are disjoint
+    \item $\mathrm{Subtree}(x)$, if $x$ lies below $y$
+    \item $\mathrm{Subtree}(y)$, if $y$ lies below $x$
+\end{itemize}
+
+This follows from the fact that a rooted tree has no cycles and each node
+has a unique path to the root.
+
+\section{A Topological View of Tagspaces}
+
+\subsection{Motivation}
+
+The tagspace is already a set, a rooted tree, and a partially ordered set.
+This suggests a further mathematical question:
+
+\begin{quote}
+Can the containership structure of a tagspace be described topologically?
+\end{quote}
+
+The answer is yes. A natural topology arises from the order structure.
+
+\subsection{Alexandrov Topology}
+
+Any partial order induces an Alexandrov topology.
+
+\begin{definition}
+Let $(T,\leq)$ be the specialization order above. A subset
+$U \subseteq T$ is open if
+\[
+x \in U \text{ and } x \leq y \implies y \in U
+\]
+for all $x,y \in T$.
+\end{definition}
+
+These are the upward-closed sets with respect to the order $\leq$.
+Because $\leq$ means ``more specific than,'' an upward-closed set contains
+everything more general than any tag it already contains.
+
+Equivalently, if one prefers to work with the containership order
+$\preceq$, one can use the dual presentation in which descendant-closed
+subtrees play the role of basic open sets.
+
+\subsection{Why This Fits Tagd}
+
+The topology is not arbitrary. It is induced by the same structural facts
+already present in the source:
+
+\begin{itemize}
+    \item ranks define a prefix order
+    \item prefix order defines containment
+    \item containment defines subtrees
+    \item subtree behavior is closed under the natural set operations of the tree
+\end{itemize}
+
+\subsection{Topological Intuition}
+
+In a tagspace, generalization and specialization propagate structurally.
+
+Example:
+
+\begin{verbatim}
+>> animal _type_of living_thing
+>> mammal _type_of animal
+>> dog _is_a mammal
+\end{verbatim}
+
+Then $dog \leq mammal \leq animal \leq living\_thing$.
+
+This means that moving upward in the order moves toward more general
+structure. In this sense, the topology encodes the taxonomic shape of the
+tagspace.
+
+\section{Hard Tags as a Universal Invariant Substructure}
+
+\subsection{Hard Tags}
+
+Let
+\[
+H \subseteq T
+\]
+be the set of hard tags.
+
+These are the tags defined axiomatically by the system, including tags
+such as:
+
+\begin{itemize}
+    \item \texttt{\_entity}
+    \item \texttt{\_sub}
+    \item \texttt{\_rel}
+    \item \texttt{\_number}
+    \item \texttt{\_interrogator}
+\end{itemize}
+
+\subsection{Shared Base}
+
+Every tagspace contains the same hard tag base. Therefore $H$ is a common
+invariant substructure across all tagspaces.
+
+\begin{remark}
+The hard tag base is the structural common ground that makes all tagspaces
+mutually legible. Any extension of a tagspace is built on top of the same
+axiomatic base.
+\end{remark}
+
+\subsection{Example}
+
+A bootstrap dump shows a fixed base such as:
+
+\begin{verbatim}
+_entity
+_sub
+_is_a
+_type_of
+_rel
+_has
+_can
+_number
+_integer
+_float
+_interrogator
+_what
+_search
+\end{verbatim}
+
+No matter how different two tagspaces become, this hard-tag substructure
+remains shared.
+
+\section{Predicate Relations as Additional Structure}
+
+\subsection{Predicates}
+
+A predicate relation is not part of the vertical containment tree.
+Instead, it adds labeled relational structure to nodes.
+
+\begin{definition}
+A predicate is a relation of the form
+\[
+(r, O)
+\]
+where $r$ is a relator and $O$ is an object list, applied to a subject.
+\end{definition}
+
+A predicate with modifier may be represented more explicitly as
+\[
+(r, o, m)
+\]
+where $r$ is the relator, $o$ the object, and $m$ the modifier.
+
+\subsection{Example}
+
+\begin{verbatim}
+>> dog _has legs = 4
+>> dog _can bark
+\end{verbatim}
+
+These do not change the position of \texttt{dog} in the tree.
+They add horizontal relational structure to the node \texttt{dog}.
+
+\subsection{Mathematical View}
+
+A tagspace therefore has at least two interacting layers:
+
+\begin{enumerate}[label=\arabic*.]
+    \item a vertical tree / order / topology given by subordinate relations
+    \item a horizontal labeled relational layer given by predicates
+\end{enumerate}
+
+This is why the system is properly called semantic-relational. The meaning
+of a tag is not exhausted by its nominal name; it is expressed by both
+hierarchical placement and attached relations.
+
+\section{Structural Identity}
+
+\subsection{Two Forms of Identity}
+
+A tag has:
+
+\begin{enumerate}[label=\arabic*.]
+    \item nominal identity
+    \item structural identity
+\end{enumerate}
+
+Nominal identity is its globally unique UTF-8 label.
+
+Structural identity is determined by:
+
+\begin{itemize}
+    \item its subordinate relation
+    \item its rank
+    \item its predicate list
+\end{itemize}
+
+\subsection{Interpretation}
+
+This is a structuralist view of information. A tag is not meaningful in
+isolation. Its meaning is determined by where it sits in the tagspace and
+how it relates to other tags.
+
+A concise formula is:
+
+\[
+\mathrm{meaning}(x) =
+\mathrm{position}(x) + \mathrm{relations}(x)
+\]
+
+where ``position'' is given by subordinate structure and rank, and
+``relations'' are given by predicates.
+
+\section{Canonical Representation}
+
+\subsection{Text as Structural Serialization}
+
+A tagspace has a canonical textual representation through \texttt{dump()}.
+
+This means that the full structure of the tagspace is representable in
+deterministic TAGL text.
+
+\subsection{Interpretation}
+
+A tagspace is not merely stored as text. Rather, the text is a canonical
+serialization of the underlying mathematical structure.
+
+This is important because it allows:
+
+\begin{itemize}
+    \item deterministic inspection
+    \item canonical comparison
+    \item hashable structural snapshots
+    \item faithful reload of the same structure
+\end{itemize}
+
+\section{Conclusion}
+
+The \texttt{tagd} system already contains a rich mathematical foundation.
+
+A tagspace may be described as:
+
+\begin{itemize}
+    \item a set of tags
+    \item a rooted tree
+    \item a rank-based containership hierarchy
+    \item a partially ordered set under specialization
+    \item an induced Alexandrov topology
+    \item an invariant hard-tag substructure
+    \item a relational layer of predicates attached to nodes
+\end{itemize}
+
+These are not external metaphors. They are mathematical descriptions of
+structure already present in the system.
+
+This supports the broader thesis that in \texttt{tagd} and TAGL,
+information is structural.
+
+\section{Future Work}
+
+Natural continuations of this document include:
+
+\begin{itemize}
+    \item formal treatment of query semantics as set and order operations
+    \item formal treatment of predicate algebra
+    \item morphisms between tagspaces
+    \item merge operations as structure-preserving transformations
+    \item closure, inheritance, and specialization in the topological model
+\end{itemize}
+
+\end{document}
+
