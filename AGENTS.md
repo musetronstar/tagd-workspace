@@ -24,8 +24,12 @@ If the user explicitly provides the task to follow, use that instead.
 * Prefer test first, then the smallest meaningful batch that completes one deliverable feature or contract.
 * Build and test after each meaningful batch.
 * Keep diffs scoped and reviewable.
-* Preserve existing style on untouched lines.
-* Do not reformat unrelated code.
-* Do not alter comments or remove commented-out blocks unless asked.
-* Do not split naturally related changes when they belong to one tested deliverable.
-* If a line does not need to change, leave it alone.
+* Intelligence over Efficiency:
+    + Preserve existing style on untouched lines.
+    + Do not reformat unrelated code.
+    + Self-documenting code preferred, but REQUIRED: add concise intent comments for non-trivial or non-obvious logic.
+    + Comments are part of the program narrative and system specification; if they diverge from the code, they are defects and must be corrected.
+    + Do not remove comments unless they are incorrect, obsolete, or explicitly instructed to be removed.
+    + Do not split naturally related changes when they belong to one tested deliverable.
+    + If a line does not need to change, leave it alone.
+
