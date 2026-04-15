@@ -1,5 +1,36 @@
 # AI-Assisted Development Doctrine
 
+## Operating Principles
+
+### Engineering Excellence
+
+Engineering Excellence in the `tagd` enterprise means preserving one consistent model of truth across semantics, code, tests, documentation, build rules, and process.
+
+We eat our own dogfood: when a subsystem is TAGL-facing, prefer designs and tests that keep the enterprise speaking TAGL end to end instead of translating truth into disconnected side systems.
+
+In practice:
+
+* correctness before convenience
+* clear boundaries and explicit contracts
+* one meaningful, reviewable batch per deliverable feature or contract
+* deterministic behavior and reproducible verification
+* alignment between doctrine, code, tests, build rules, and documentation
+* process improvement captured in repo artifacts when recurring friction appears
+
+Consistency is safety. A shorter path to the same truth is usually the better one.
+
+### Respect For Human Time
+
+Human time is scarce. Agent output is cheap.
+
+Prefer:
+
+* concise instructions
+* one canonical source for each rule
+* no transient context in durable documents
+* no repeated guidance across doctrine, task files, and reports
+* enough detail to act, not enough detail to restate the obvious
+
 ## Command Structure
 
 |                                 Role                             |                       Owner                   |
@@ -13,8 +44,6 @@
 * The LLM defines what must be true.
 * The Coding Agent decides how to make it true.
 
----
-
 ## Responsibilities
 
 ### Chat / LLM
@@ -24,9 +53,10 @@
 - Define acceptance criteria
 - Review diffs: boundaries, coupling, test quality, naming
 - Issue the next mission based on review
+- Improve the process itself when patterns, friction, or recurring ambiguity are discovered
+- Uphold Engineering Excellence in mission design and enduring repo guidance
 
-The LLM operates at **architectural altitude**.  
-It should not choreograph internal code moves unless correcting a specific known mistake.
+The LLM operates at architectural altitude. It defines the contract, not the internal code choreography.
 
 ### Coding Agent
 - Read and inspect the code
@@ -34,20 +64,50 @@ It should not choreograph internal code moves unless correcting a specific known
 - Execute changes
 - Run tests
 - Report results concisely
+- Surface lessons learned that can improve future tasks, templates, tests, build rules, and documentation
+- Recommend process or documentation improvements when recurring weaknesses become visible
+- Uphold Engineering Excellence in implementation quality, verification discipline, and reviewability
 
-The Coding Agent operates at **implementation altitude**.  
-It should decide *how* to do the work within the given boundaries.
+The Coding Agent operates at implementation altitude. It decides how to do the work and should complete the smallest meaningful, testable batch, not the smallest isolated edit.
 
 ### Repo Artifacts
 - Carry enduring doctrine so prompts stay short
 - Define required behavior via tests
 - Encode naming conventions, module boundaries, and design intent
+- Preserve process memory: templates, reports, lessons learned, and reusable guidance should accumulate here rather than being rediscovered each time
+- Make good practice easier to repeat than bad practice
 
----
+## Process Improvement
+
+When a task reveals recurring friction, ambiguity, or waste, capture the improvement close to the source of truth:
+
+* task-shaping problems -> task templates or doctrine
+* recurring review confusion -> acceptance criteria or reporting structure
+* unstable generated outputs -> deterministic generator rules
+* repeated build/test breakage -> build scripts, test targets, or workspace-path guidance
+* repeated architecture misunderstanding -> README, AGENTS, architecture notes, or focused reports
+
+Prefer concise durable improvements over broad meta-discussion.
+
+## Self Learning
+
+Treat each task as a chance to improve future judgment without inventing new doctrine on every turn. Useful learning looks like:
+
+* noticing repeated failure modes
+* extracting reusable lessons from completed work
+* feeding those lessons back into repo artifacts
+* making future prompts shorter, clearer, and less error-prone
+* reducing avoidable context reload and micro-iteration churn
+
+The standard is pragmatic usefulness:
+
+> If the next agent reads the updated artifact, will it make the next iteration clearer, safer, or faster?
+
+If yes, capture it.
 
 ## Prompt Doctrine
 
-A good Coding Agent prompt contains exactly five things:
+A good task document usually contains:
 
 ```
 # Task
@@ -59,26 +119,9 @@ A good Coding Agent prompt contains exactly five things:
 
 ## Constraints
 * preserve behavior
-* keep diff small and reviewable
+* keep diff scoped and reviewable
 * no new dependencies
-* follow AGENTS.md
-* follow interruptions introduced by user
-  + comments or deleted code become design imperatives or contracts
-  - do not fix broken code by reverse breaking changes introduced by user
-  + do fix broken code by TDD (design by contract):
-    1) write test according to new suggested change to design or behavior
-    2) redesign/refactor around new tests and breaking changes
-    3) pass tests according to new design/behaviour
 * update tests as needed
-
-
-### Interruptions by User
-  + user comments or deleted code become design imperatives or contracts
-  - do not fix broken code by reverse breaking changes introduced by user
-  + do fix broken code by TDD (design by contract):
-    1) write test according to new suggested change to design or behavior
-    2) redesign/refactor around new tests and breaking changes
-    3) pass tests according to new design/behaviour
 
 ## Acceptance criteria
 * boundary condition
@@ -91,17 +134,7 @@ A good Coding Agent prompt contains exactly five things:
 3. open concerns
 ```
 
-That is usually enough.
-
-For refactor prompts, state the ownership boundary early.
-
-When behavior spans modules, define:
-
-* what moves
-* what stays
-* which boundary the tests should prove
-
----
+Those elements are usually enough. Keep task documents short unless depth is required, and avoid restating repo-global rules in task-local prose.
 
 ## What to Avoid
 
@@ -115,8 +148,6 @@ When behavior spans modules, define:
 
 **Less is more.** A short, scannable prompt is faster for humans and more decisive for agents.
 
----
-
 ## Working Cycle
 
 ```
@@ -126,11 +157,8 @@ When behavior spans modules, define:
 4. LLM writes the next short mission
 ```
 
-One mission per step. No all-in-one redesign prompts unless a full redesign is the intent.
-
-If a task is fundamentally about design, analysis, or documentation, do not
-force it into a refactor template. Use a documentation/design task shape
-instead of mixing planning and implementation concerns into one template.
+One meaningful mission per step. No all-in-one redesign prompts unless a full redesign is the intent.
+Each mission should usually complete one reviewable feature, seam, or contract.
 
 When a task explicitly requires TDD sequencing, state the order:
 
@@ -139,63 +167,31 @@ When a task explicitly requires TDD sequencing, state the order:
 3. system tests second
 4. task is not complete until all required test layers pass
 
-If a repo defines `make all` as the completion command, `make all` must run the
-full required suite, not just build artifacts.
+When several edits naturally belong to one testable feature or contract, keep them in the same iteration instead of splitting them into artificial micro-steps.
 
-Prefer repo-owned local fixtures for normal tests over external mutable data
-files. Use external files only for explicit integration coverage.
-
-When a test must create a temporary external resource, keep cleanup explicit
-and robust so failed assertions do not leave avoidable residue behind.
-
-Mark aggregate make targets like `all`, `tests`, and `clean` as `.PHONY`.
+If a repo defines `make all` as the completion command, it must run the required suite, not just build artifacts.
 
 Implement the specified external contract directly.
 Do not preserve wrong internal formats and compensate for them in downstream code or tests.
 
-Write tests at the ownership boundary where the behavior truly belongs.
-
 ## Reporting
 
 When a task or user prompt changes one or more files, conclude the report with a suggested
-concise git commit message.
+concise git commit message in the format `<agent>: <commit message>`.
 
----
+When a task reveals reusable process improvements, include a short `lessons learned` or
+`process improvement` note and identify the best repo artifact to update.
 
-## Comments
+When a task exposes semantic drift, naming drift, contract drift, or documentation drift,
+call that out explicitly as a consistency issue.
 
-Prefer self-documenting code over explanatory prose;
+Reports and documents must respect human reading time:
 
-But use a short comment for non-obvious names, algorithms, structures, etc. that are impactful to the design or behaviour of the system.
-
-The comment should align the reader to the **intent**, not restate the syntax.
-
-When removing placeholder, emotional, or low-signal comments from workaround
-code, replace them with a short intent comment if the remaining behavior is not
-obvious to the next reader.
-
-## TODO Hygiene
-
-TODOs should be one of:
-
-* real deferred work
-* historical note preserving design intent
-* stale and removable
-
-At task closeout:
-
-* remove TODOs that are already implemented
-* classify remaining work as deferred, superseded, or incomplete rather than
-  treating all open items as the same kind of issue
-
-## Reports and Promotion
-
-Use `out/` as working memory for reports, status notes, and temporary analysis.
-
-If a report contains durable process guidance:
-
-* propose promoting it into `docs/*` or a task template
-* do not leave long-term doctrine only in `out/`
+* prefer concentrated, distilled writing
+* separate enduring instructions from current-turn observations
+* do not mix task specification with scratch analysis
+* do not overstate what is known
+* do not duplicate what is already clearly defined elsewhere
 
 ---
 
@@ -223,3 +219,6 @@ Before sending a prompt, ask:
 
 If you are specifying implementation, pull back up to architecture.  
 The agent should own the how.
+
+Write plans in a declarative, assertive style: state what must be true, not how to achieve it.
+When specificity aids the contract — as in test guidance — high-level pseudocode is acceptable.

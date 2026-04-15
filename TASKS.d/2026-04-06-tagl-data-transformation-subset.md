@@ -15,10 +15,10 @@ Documents which can be changed:
 
 Read for reference:
 
-* `~/projects/tagd`
-* `~/projects/tagr`
-* `~/projects/tagd-simple-english`
-* `~/projects/tagd-nlp`
+* `tagd`
+* `tagr`
+* `tagd-simple-english`
+* `tagd-nlp`
 * existing TAGL grammar and parser documents when needed for contrast
 
 This is a design/documentation task. Do not change code in reference repositories during this task.

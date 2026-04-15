@@ -1,0 +1,70 @@
+# Task
+
+[One paragraph. State the desired change in behavior or structure, not the internal implementation choreography.]
+
+## Principles
+
+* State the owning seam or contract.
+* State how the change preserves or improves consistency across code, tests, build behavior, and documentation.
+* If the task touches TAGL-facing behavior, state how it preserves a TAGL-centered source of truth.
+
+## Scope
+
+### Read
+* [repositories, modules, documents, tests, generated artifacts the agent should inspect]
+
+### Write
+* [files or directories the agent may change]
+
+### Non-goals
+* [explicitly name nearby files, subsystems, or ideas that are out of scope]
+
+## Doctrine
+
+Follow `docs/ai-assisted-dev-doctrine.md`
+
+## Constraints
+
+* preserve behavior unless the task explicitly says otherwise
+* keep diff scoped, reviewable, and local to the stated scope
+* do not split naturally related edits when they are needed to complete one tested deliverable
+* no new dependencies unless explicitly requested
+* follow priority
+  1. user prompts
+  2. user specified task `.md` file
+  3. `README.md` and `AGENTS.md`
+  4. files referenced by the materials above
+* do not silently broaden scope when a missing prerequisite is discovered
+* if generated files or build products are expected, name them explicitly
+* if a report or plan is part of the task, distinguish completed work from proposed follow-on work
+* if the task changes a truth-bearing structure, state the source of truth explicitly
+
+## Language & Style
+
+* follow `STYLE.md`
+* speak TAGL `TAGL-README.md` when working in TAGL-oriented repos
+* preserve the author's comments and design intent unless the task explicitly changes them
+
+## Tests
+
+* write or update tests at the boundary that proves the requested feature or contract
+* prefer fast in-process tests first, system tests second when CLI or process behavior matters
+* modified code must be tested
+* state the exact command(s) required for task completion
+* task is not complete until the required test layer(s) pass
+* if the build or tests depend on workspace-relative paths, verify those paths explicitly
+
+## Acceptance Criteria
+
+* changes stay within the declared scope and non-goals
+* the requested contract is preserved or improved as specified
+* named tests/build commands pass
+* the resulting structure is easier to understand at the stated seam
+* the change reduces drift between code, tests, and documentation
+
+## Deliverable: Concise Report
+
+1. summary of changes
+2. test results
+3. open issues, concerns, or interesting observations
+4. suggested concise git commit message

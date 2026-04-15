@@ -1,23 +1,22 @@
-# tagd-dictionary Agent Workspace
+# tagd Workspace
 
-This repository orchestrates AI-assisted translation of natural language to TAGL.
+This workspace supports TAGLization work across linked repositories.
 
-## Goal
-The goal is to represent a Simple English dictionary as linked data in a browsable tagspace served by an httagd web app.
+## Purpose
 
-Start with translating the VOA Wordbook dictionary into TAGL.
+* Translate source material into TAGL.
+* Build useful tagspaces.
+* Support related `tagd`, `tagr`, and dictionary work.
 
-## Rules
-* Allowed to modify files in this directory.
-* Allowed follow symlinks in this directory.
-* Do not access files or directories outside this directory unless I ask or approve.
+## Structure
 
-## Instructions
+* `tagd/` core semantic-relational database and TAGL implementation
+* `tagd-simple-english/` Simple English dictionary source and related app work
+* `tagr/` natural language to TAGL translator
+* `TASKS.d/` task files
+* `skills/` workspace meta-command skills
 
-Read `README.md`
+## Notes
 
-## Reports
-
-* `out/` is for working reports, status notes, and temporary analysis artifacts.
-* If a report contains durable process guidance, propose promoting it into
-  `docs/*` or task templates rather than leaving doctrine only in `out/`.
+* `TAGL-README.md` describes TAGL.
+* `tagd`, `tagd-simple-english`, `tagr`, and `tagd-nlp` are git worktrees.

@@ -218,6 +218,13 @@ RE2CFLAGS =
 tagr-scanner.out.cc: tagr-scanner.re.cc
     re2c $(RE2CFLAGS) -o tagr-scanner.out.cc tagr-scanner.re.cc
 
+## Process Addendum
+
+* The next implementation iteration should start with the narrowest executable seam: one tokenizer test that proves the first re2c-driven token path without requiring the full NLP token set up front.
+* Feasibility reports should explicitly separate what is already true in the codebase from what is only proposed.
+* Build integration should be treated as part of the design contract, not an afterthought: generated-file rules, workspace-relative paths, and test entry points should be named in the plan before coding starts.
+* When current behavior is known to be imperfect, the plan should state whether the next step preserves that behavior temporarily or intentionally changes it under test.
+
 tagr: tagr-scanner.out.cc
     g++ -O3 -std=c++23 -W -o $(TAGR_BIN) main.cc tagr.cc tagr-scanner.out.cc $(INC) $(LFLAGS)
 ```

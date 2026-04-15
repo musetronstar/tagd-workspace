@@ -1,66 +1,35 @@
 # tagd Agent Workspace
 
-## Symlinks
+## Startup
 
-This workspace contains symlinks to these repositories:
-* `tagd/` tagd semantic-relational database and TAGL languge
-* `tagd-simple-english/` VOA Wordbook Simple English dictionary to be translated into TAGL and httagd web app
-* `tagr/` natural language to TAGL translator
+On each new session:
 
-## TAGL
+1. Find the most recent markdown file in `TASKS.d/`.
+2. Read it.
+3. Treat it as the current assignment.
+4. Before editing, summarize objective, scope, constraints, deliverables, and acceptance criteria.
+5. If repo doctrine and task conflict, stop and report the conflict.
 
-Understand the TAGL language in `TAGL-README.md`
+If the user explicitly provides the task to follow, use that instead.
 
-## Definitions
+## Meta Commands
 
-tagspace: a tagd semantic-relational database using TAGL
-TAGLize: to translate (or tranform) input into TAGL
-
-## Goals
-
-TAGLize various forms of input and construct meaninful tagspaces.
-
-## Tasks
-
-Task `.md` files are stored in `TASKS.d`.
-Only follow the task specified in the user prompt.
+* `~next` asks for the next meaningful TDD iteration from the current checkpoint.
+* `~status` asks for worktree status and checkpoint readiness.
+* `~/...` is a home-directory path prefix, not a meta-command.
 
 ## Workflow
 
-### One small step at a time
+* Work in reviewable, feature-sized batches.
+* Prefer test first, then the smallest meaningful batch that completes one deliverable feature or contract.
+* Build and test after each meaningful batch.
+* Keep diffs scoped and reviewable.
+* Intelligence over Efficiency:
+    + Preserve existing style on untouched lines.
+    + Do not reformat unrelated code.
+    + Self-documenting code preferred, but REQUIRED: add concise intent comments for non-trivial or non-obvious logic.
+    + Comments are part of the program narrative and system specification; if they diverge from the code, they are defects and must be corrected.
+    + Do not remove comments unless they are incorrect, obsolete, or explicitly instructed to be removed.
+    + Do not split naturally related changes when they belong to one tested deliverable.
+    + If a line does not need to change, leave it alone.
 
-Do not make sweeping changes. Each edit should do exactly one thing.
-Break large tasks into small steps and iterate.
-
-Prefer the smallest change possible:
-* write the test first
-* make the minimal code change to pass it
-* build and test after each step
-
-### Preserve the author's style
-
-When editing existing code:
-* do not reformat lines that do not need changing
-* do not change whitespace, indentation, or brace style on untouched lines
-* do not alter comments unless explicitly asked
-* do not remove commented-out code blocks without being explicitly asked
-
-Comments and TODOs are design intent, not clutter.
-
-### Minimal diffs
-
-Produce the smallest possible diff that achieves the goal.
-If a line does not need to change to make the feature work, do not touch it.
-
-Assume the author may review changes with `git diff` and will care about
-unnecessary edits.
-
-### Reviewability
-
-For non-trivial changes, prefer a patch the author can review rather than a
-large rewrite.
-
-### Verification
-
-Build and test after every change.
-Before reporting success, make sure the current step is complete and verified.

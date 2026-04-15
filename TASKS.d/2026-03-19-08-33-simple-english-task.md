@@ -1,7 +1,7 @@
 # tagd Agent Workspace
 
-## Symlinks
-This workspace contains symlinks to these repositories:
+## Git Worktrees
+This workspace contains git worktrees for these repositories:
 * `tagd/` tagd semantic-relational database and TAGL languge
 * `tagd-simple-english/` VOA Wordbook Simple English dictionary to be translated into TAGL and httagd web app
 * `tagr/` natural language to TAGL translator

@@ -1,0 +1,3 @@
+display_name: Tagd Status
+short_description: Report worktree status and checkpoint readiness in tagd-workspace.
+default_prompt: Report the current tagd worktree status, align it to task intent, and say whether the current slice looks ready to commit.

@@ -1,0 +1,626 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+% Theorem environments
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{remark}{Remark}[section]
+
+% Code listing style for TAGL
+\lstdefinelanguage{TAGL}{
+  keywords={},
+  sensitive=false,
+  comment=[l]{--},
+  morecomment=[s]{-*}{*-},
+  morestring=[b]",
+}
+\lstdefinestyle{tagl}{
+  language=TAGL,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{teal},
+  backgroundcolor=\color{gray!8},
+  frame=single,
+  framesep=4pt,
+  rulecolor=\color{gray!40},
+  breaklines=true,
+  captionpos=b,
+}
+
+% Code listing style for C++
+\lstdefinestyle{cpp}{
+  language=C++,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{teal},
+  backgroundcolor=\color{gray!8},
+  frame=single,
+  framesep=4pt,
+  rulecolor=\color{gray!40},
+  breaklines=true,
+  captionpos=b,
+}
+
+\title{\textbf{The Mathematics of tagd}\\
+\large A Formal Description of the Mathematical Structures\\
+in the tagd Semantic-Relational System}
+\author{Isaac N Colley}
+\date{April 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The tagd system was built from engineering instincts about how knowledge should
+be structured. This paper makes the mathematics of those instincts explicit.
+Every claim here is grounded in the tagd source code and the TAGL language
+specification. The core thesis is simple: \emph{information is structural}. A
+tag's meaning is not intrinsic --- it is determined entirely by its position in
+the tagspace, by its relations to other tags. This is not a metaphor. It is a
+precise mathematical claim, and the sections below give it precise mathematical
+form, identifying in the source code the structures of set theory, partial
+orders, and Alexandrov topology.
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+\section{Primitives}
+
+\subsection{Tags}
+
+A \textbf{tag} is the atomic unit of the tagd system. All tokens in TAGL are
+UTF-8 labels \cite{readme}. A tag carries two distinct identities:
+
+\begin{itemize}
+  \item \textbf{Nominal identity}: a globally unique UTF-8 label.
+  \item \textbf{Structural identity}: its position in the tagspace hierarchy,
+        given by its rank, defined by its subordinate relation (aka identity
+        relation) \cite{spec}.
+\end{itemize}
+
+\begin{definition}[Tag Set]
+Let $T$ be the set of all tags in a tagspace. Each tag $t \in T$ is identified
+by a string $\mathrm{id}(t) \in \Sigma^*$, where $\Sigma^*$ denotes the set of
+all finite UTF-8 strings.
+\end{definition}
+
+In TAGL, defining a tag looks like:
+\begin{lstlisting}[style=tagl, caption={Defining a tag via a subordinate relation}]
+>> dog _is_a mammal;
+\end{lstlisting}
+Here \texttt{dog} is a tag. Its nominal identity is the string \texttt{"dog"}.
+Its structural identity is defined by its subordinate relation to
+\texttt{mammal}.
+
+\subsection{The Root and the Axiom}
+
+Every tagspace has a distinguished root tag: \texttt{\_entity}. The README
+states:
+\begin{quote}
+\texttt{\_entity} is axiomatic and self-referencing
+(i.e.\ \texttt{\_entity \_sub \_entity}). It is the only tag having this
+relation. It is the root of a tagspace.
+\end{quote}
+
+\begin{definition}[Axiomatic Root]
+The tag \texttt{\_entity} is the \textbf{axiomatic root} of every tagspace. It
+is the unique fixed point of the subordinate relation: the one tag whose
+super-object is itself.
+\end{definition}
+
+In TAGL notation:
+\begin{lstlisting}[style=tagl, caption={The axiomatic root}]
+_entity _sub _entity
+\end{lstlisting}
+
+In set-theoretic terms, \texttt{\_entity} is the \textbf{least element} of the
+tagspace under the subordinate order --- the tag that is an ancestor of
+everything, including itself.
+
+\section{The Subordinate Relation and the Rooted Tree}
+
+\subsection{Subordinate Relations}
+
+A tag's structural identity is defined by exactly one subordinate (sub)
+relation. The TAGL specification states \cite{spec}:
+\begin{quote}
+A subject MUST have exactly one subordinate relation to exist in the tagspace.
+\end{quote}
+
+The sub relators are defined in \texttt{hard-tags.h} \cite{hardtags}:
+\begin{lstlisting}[style=cpp, caption={Sub relator definitions in hard-tags.h}]
+#define HARD_TAG_SUB     "_sub"     // most abstract sub relator
+#define HARD_TAG_IS_A    "_is_a"    // instance subordination
+#define HARD_TAG_TYPE_OF "_type_of" // type subordination
+\end{lstlisting}
+
+A typical TAGL knowledge hierarchy:
+\begin{lstlisting}[style=tagl, caption={Building a subordinate hierarchy in TAGL}]
+>> physical_object -^ _entity;
+>> living_thing _type_of physical_object;
+>> animal _type_of living_thing;
+>> mammal _type_of animal;
+>> dog _is_a mammal;
+\end{lstlisting}
+
+\subsection{The Tagspace as a Rooted Tree}
+
+The subordinate relation organizes all tags into a \textbf{rooted tree}.
+
+\begin{definition}[Tagspace Tree]
+A tagspace is a pair $(T, p)$ where:
+\begin{itemize}
+  \item $T$ is a set of tags containing the distinguished root
+        \texttt{\_entity},
+  \item $p : T \setminus \{\texttt{\_entity}\} \to T$ is the \emph{parent
+        function}, assigning each non-root tag its super-object.
+\end{itemize}
+There are no cycles (except the axiomatic self-reference of
+\texttt{\_entity}).
+\end{definition}
+
+The tree structure of the example above:
+\begin{verbatim}
+_entity
+  physical_object
+    living_thing
+      animal
+        mammal
+          dog
+\end{verbatim}
+
+This is not merely a data structure choice. The tree encodes \emph{taxonomic
+knowledge}: to be a \texttt{dog} is to be a \texttt{mammal}, which is to be an
+\texttt{animal}, and so on. Structural position \emph{is} meaning.
+
+\section{Rank: Encoding the Tree in Strings}
+
+\subsection{The Rank Function}
+
+Each tag is assigned a \textbf{rank} --- a UTF-8 byte string encoding its
+position in the tagspace tree. The \texttt{rank.h} source states:
+\begin{quote}
+A rank string is the ordinal value of each node in the tagspace tree. A code
+point at a particular level is known as the rank value.
+\end{quote}
+
+\begin{definition}[Rank Function]
+The rank function $r : T \to \Sigma^*$ assigns to each tag a UTF-8 string
+such that the string's structure reflects the tag's position in the tree.
+\end{definition}
+
+Concrete rank assignments from the bootstrap dump \cite{bootstrap}:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Tag} & \textbf{Rank (dotted)} & \textbf{Position} \\
+\midrule
+\texttt{\_entity}       & (empty)  & level 0, root \\
+\texttt{\_sub}          & 1        & level 1 \\
+\texttt{\_is\_a}        & 1.1      & level 2 \\
+\texttt{\_type\_of}     & 1.2      & level 2 \\
+\texttt{\_rel}          & 2        & level 1 \\
+\texttt{\_has}          & 2.1      & level 2 \\
+\texttt{\_number}       & 3        & level 1 \\
+\texttt{\_integer}      & 3.1      & level 2 \\
+\texttt{\_float}        & 3.2      & level 2 \\
+\texttt{\_interrogator} & 4        & level 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{The Prefix Partial Order}
+
+The key property of ranks is stated explicitly in \texttt{rank.h}:
+\begin{quote}
+All children of a particular node in the rank hierarchy will be prefixed by the
+parent node --- that is, rank substrings define subtrees in the hierarchy.
+\end{quote}
+
+\begin{definition}[Containership Relation]
+Define the \textbf{containership relation} $\sqsubseteq$ on $T$ by:
+\[
+  a \sqsubseteq b
+  \iff
+  r(b) \text{ is a prefix of } r(a).
+\]
+That is, $a \sqsubseteq b$ means $b$ is an ancestor of $a$ (or $b = a$). Tag
+$b$ \emph{contains} tag $a$ in the hierarchy.
+\end{definition}
+
+This relation is implemented directly in \texttt{rank.h}:
+\begin{lstlisting}[style=cpp, caption={Containership via rank prefix in rank.h}]
+// this rank contains the rank being compared,
+// in other words, this rank is a prefix to the other
+bool contains(const rank&) const;
+\end{lstlisting}
+
+And used in \texttt{tagd.cc} for structural operations on tag sets:
+\begin{lstlisting}[style=cpp, caption={Containership used in merge\_containing\_tags (tagd.cc)}]
+if (b->rank().contains(a->rank())) { // rank can contain itself (b == a)
+    merged++;
+} else if (a->rank().contains(b->rank())) {
+    A.insert(*b);
+}
+\end{lstlisting}
+
+\subsection{Verifying the Partial Order Axioms}
+
+\begin{theorem}
+The containership relation $\sqsubseteq$ is a partial order on $T$.
+\end{theorem}
+
+\begin{proof}
+We verify the three required properties.
+
+\textbf{Reflexivity.} \texttt{rank.h} notes that \texttt{contains()} holds when
+$b = a$, since every string is a prefix of itself. Hence $a \sqsubseteq a$
+for all $a \in T$.
+
+\textbf{Antisymmetry.} Suppose $a \sqsubseteq b$ and $b \sqsubseteq a$. Then
+$r(b)$ is a prefix of $r(a)$ and $r(a)$ is a prefix of $r(b)$. A string $u$
+is a prefix of $v$ and $v$ is a prefix of $u$ if and only if $u = v$. Hence
+$r(a) = r(b)$, which implies $a = b$ since ranks uniquely identify tags.
+
+\textbf{Transitivity.} Suppose $a \sqsubseteq b$ and $b \sqsubseteq c$. Then
+$r(b)$ is a prefix of $r(a)$ and $r(c)$ is a prefix of $r(b)$. Since the
+prefix relation on strings is transitive, $r(c)$ is a prefix of $r(a)$, so
+$a \sqsubseteq c$.
+\end{proof}
+
+Therefore $(T, \sqsubseteq)$ is a \textbf{poset} (partially ordered set).
+
+\subsection{Lexicographic Total Order}
+
+Ranks also carry a total \textbf{lexicographic order}, implemented in
+\texttt{rank.h}:
+\begin{lstlisting}[style=cpp, caption={Lexicographic ordering of ranks}]
+bool operator<(const rank& rhs) const { return _data < rhs._data; }
+\end{lstlisting}
+
+This order --- a deliberate UTF-8 design choice noted in \texttt{rank.h}
+(``it collates lexicographically'') --- enables efficient storage and retrieval
+of the entire tagspace as a sorted structure. Tags within the same subtree sort
+together. The tree \emph{is} the index.
+
+\section{The Tagspace Topology}
+
+\subsection{From Partial Order to Topology}
+
+Every partial order canonically generates a topology. Given the poset
+$(T, \sqsubseteq)$, we define:
+
+\begin{definition}[Tagspace Open Sets]
+A subset $U \subseteq T$ is \textbf{open} if it is upward-closed under
+$\sqsubseteq$:
+\[
+  U \in \mathcal{T}
+  \iff
+  \forall\, a \in U,\; \forall\, b \in T :\;
+  a \sqsubseteq b \Rightarrow b \in U.
+\]
+\end{definition}
+
+In the tagspace tree, ``upward-closed'' means: if a tag is in the set, all
+its ancestors are too. Each basic open set is the \textbf{subtree rooted at a
+tag} together with all tags above it.
+
+This construction is known as the \textbf{Alexandrov topology} --- the topology
+generated by a partial order in which arbitrary intersections (not just finite
+ones) of open sets remain open.
+
+\subsection{Verifying the Topology Axioms}
+
+\begin{theorem}
+Let $M$ be the set of all tags in a tagspace and let $\mathcal{T}$ be the
+collection of upward-closed subsets under $\sqsubseteq$. Then
+$(M, \mathcal{T})$ is a topological space.
+\end{theorem}
+
+\begin{proof}
+We verify the three axioms.
+
+\textbf{(i) $\emptyset \in \mathcal{T}$ and $M \in \mathcal{T}$.}
+The empty set is vacuously upward-closed. The full set $M$ is upward-closed
+because there is no $b \in T$ outside $M$. Both belong to $\mathcal{T}$.
+
+\textbf{(ii) Finite intersections.}
+Let $U, V \in \mathcal{T}$. Suppose $a \in U \cap V$ and $a \sqsubseteq b$.
+Then $b \in U$ (since $U$ is upward-closed) and $b \in V$ (since $V$ is
+upward-closed), so $b \in U \cap V$. Hence $U \cap V \in \mathcal{T}$.
+
+\textbf{(iii) Arbitrary unions.}
+Let $\{U_\alpha\}$ be any collection of sets in $\mathcal{T}$. Suppose
+$a \in \bigcup_\alpha U_\alpha$ and $a \sqsubseteq b$. Then $a \in U_\alpha$
+for some $\alpha$. Since $U_\alpha$ is upward-closed, $b \in U_\alpha
+\subseteq \bigcup_\alpha U_\alpha$. Hence $\bigcup_\alpha U_\alpha \in
+\mathcal{T}$.
+\end{proof}
+
+Therefore $(M, \mathcal{T})$ is a \textbf{topological space}. The
+\texttt{merge\_containing\_tags} function in \texttt{tagd.cc} computes
+exactly the intersection of two subtrees, exhibiting axiom (ii) in code:
+\begin{lstlisting}[style=cpp, caption={Intersection of subtrees in tagd.cc}]
+if (b->rank().contains(a->rank())) {
+    merged++;
+} else if (a->rank().contains(b->rank())) {
+    A.insert(*b);
+}
+\end{lstlisting}
+
+\subsection{Specialization Order}
+
+In the Alexandrov topology, every topological space carries a natural
+\textbf{specialization preorder}: $a$ specializes $b$ (written
+$a \rightsquigarrow b$) when $a$ is in the topological closure of $\{b\}$.
+
+\begin{proposition}
+In the tagspace topology, the specialization order coincides with the
+subordinate order: $a \rightsquigarrow b$ if and only if $a$ is a descendant
+of $b$ in the tagspace tree.
+\end{proposition}
+
+In plain language: \texttt{dog} specializes \texttt{mammal}, which specializes
+\texttt{animal}. More specific tags (deeper in the tree) specialize more general
+ones. Taxonomic inheritance is not a rule to be enforced --- it is a geometric
+consequence of the shape of the space.
+
+\subsection{Continuity as Meaning-Preservation}
+
+\begin{definition}[Tagspace Map]
+A map $f : T_1 \to T_2$ between two tagspaces is \textbf{topologically
+continuous} if it preserves open sets: $f^{-1}(U) \in \mathcal{T}_1$ for
+every $U \in \mathcal{T}_2$.
+\end{definition}
+
+\begin{proposition}
+A map $f : T_1 \to T_2$ is continuous (with respect to the Alexandrov
+topologies) if and only if it is order-preserving: whenever
+$a \sqsubseteq b$ in $T_1$, we have $f(a) \sqsubseteq f(b)$ in $T_2$.
+\end{proposition}
+
+This gives a precise mathematical definition of a
+\textbf{meaning-preserving transformation} between tagspaces. If
+\texttt{dog \_is\_a mammal} in $T_1$, a continuous map must send \texttt{dog}
+somewhere below the image of \texttt{mammal} in $T_2$.
+
+\section{The Hard Tag Base: A Universal Subspace}
+
+\subsection{Hard Tags}
+
+Every tagspace --- no matter how different its user-defined tags --- contains
+exactly the same set of hard tags, defined in \texttt{hard-tags.h}
+\cite{hardtags}:
+
+\begin{lstlisting}[style=cpp, caption={Core hard tag definitions in hard-tags.h}]
+#define HARD_TAG_ENTITY       "_entity"       // root
+#define HARD_TAG_SUB          "_sub"          // subordination
+#define HARD_TAG_IS_A         "_is_a"         // instance relation
+#define HARD_TAG_TYPE_OF      "_type_of"      // type relation
+#define HARD_TAG_RELATOR      "_rel"          // predicate root
+#define HARD_TAG_HAS          "_has"          // possession
+#define HARD_TAG_CAN          "_can"          // capability
+#define HARD_TAG_NUMBER       "_number"       // numeric type root
+#define HARD_TAG_INTEGER      "_integer"      // integer type
+#define HARD_TAG_FLOAT        "_float"        // float type
+#define HARD_TAG_INTERROGATOR "_interrogator" // query root
+\end{lstlisting}
+
+\subsection{The Hard Tag Subspace}
+
+\begin{definition}[Hard Tag Subspace]
+Let $H \subset T$ denote the set of hard tags in any tagspace $T$. The
+induced subspace topology on $H$ is identical in every tagspace. $H$ is
+therefore the \textbf{universal invariant subspace} --- a fixed topological
+base that every tagspace shares by construction.
+\end{definition}
+
+\begin{remark}
+In categorical terms, the hard tag subspace is the \textbf{initial object} in
+the category of tagspaces: every tagspace is an extension of $H$, and every
+valid map between tagspaces must fix $H$.
+\end{remark}
+
+\subsection{Interoperability via the Common Base}
+
+Because every tagspace contains $H$ as a common topological foundation, any
+two tagspaces can communicate. The hard tags are the shared language --- the
+invariant ground that makes the \texttt{httagd} web protocol possible. Two
+tagspaces may diverge arbitrarily in their user-defined tags, but they always
+agree on the structure of $H$.
+
+\begin{lstlisting}[style=tagl, caption={Hard tags are invariant; user tags vary}]
+-- invariant in every tagspace:
+_entity _sub _entity
+
+-- user-defined, varies by tagspace:
+>> dog _is_a mammal;
+\end{lstlisting}
+
+\section{Predicates: Fibered Structure}
+
+\subsection{Relators Are Tags}
+
+Crucially, relators are themselves tags --- subordinate to \texttt{\_rel} in
+the tagspace tree. This means predicates are not outside the system; they are
+\emph{inside} it. The tagspace is self-describing.
+
+From the bootstrap dump \cite{bootstrap}:
+\begin{verbatim}
+_rel     rank: 2        (root of all relators)
+_has     rank: 2.1
+_can     rank: 2.2
+_refers  rank: 2.3
+\end{verbatim}
+
+The language used to attach meaning to tags is itself expressed in the same
+structural language.
+
+\subsection{Predicates as Horizontal Relations}
+
+Predicates are relations attached to a tag that do not alter its position in
+the tree. From \texttt{TAGL-spec.md} \cite{spec}:
+\begin{quote}
+A predicate consists of a relator followed by an object\_list. A relator MUST
+be a tag subordinate to \texttt{\_rel}.
+\end{quote}
+
+\begin{lstlisting}[style=tagl, caption={Vertical identity and horizontal predicates}]
+>> dog _is_a mammal    -- vertical: places dog in the tree
+    _has legs = 4, tail
+    _can bark;         -- horizontal: predicate data at dog
+\end{lstlisting}
+
+\subsection{The Two-Layer Structure}
+
+The tagspace carries two distinct mathematical layers:
+
+\begin{definition}[Two-Layer Tagspace Structure]
+\begin{enumerate}
+  \item \textbf{Base space}: the topological space $(M, \mathcal{T})$ defined
+        by subordinate relations and ranks --- the vertical dimension.
+  \item \textbf{Fiber}: at each tag $t \in M$, a set of predicates
+        $P(t) \subseteq \mathrm{Rel} \times T \times \mathrm{Mod}$ --- the
+        horizontal dimension, where $\mathrm{Rel}$ is the set of relator tags
+        and $\mathrm{Mod}$ is the set of modifier values.
+\end{enumerate}
+\end{definition}
+
+This two-layer structure --- a base space with additional data attached at each
+point --- is analogous to a \textbf{fiber bundle} in differential geometry. The
+topology gives the skeleton; the predicates give the flesh.
+
+The \texttt{abstract\_tag} class in \texttt{tagd.h} encodes exactly this
+decomposition:
+\begin{lstlisting}[style=cpp, caption={Two-layer structure in abstract\_tag (tagd.h)}]
+class abstract_tag {
+    tagd::rank    _rank;       // position in the base space
+    predicate_set relations;   // fiber: additional data at this point
+};
+\end{lstlisting}
+
+\section{Structural Identity}
+
+\subsection{Identity Is Position}
+
+The deepest mathematical claim of the tagd system is that a tag's identity is
+entirely structural. The TAGL specification defines:
+\begin{quote}
+\textbf{Structural identity}: the identity of a tag defined by its subordinate
+relation (rank) and predicate\_list.
+\end{quote}
+
+A tag \texttt{dog} is not \texttt{dog} because of the string \texttt{"dog"}.
+It is \texttt{dog} because of where it sits --- under \texttt{mammal}, under
+\texttt{animal}, under \texttt{living\_thing}, under \texttt{\_entity} --- and
+because of what predicates are attached to it there. Change the position (the
+subordinate relation), and you have a different tag, regardless of the label.
+
+This is \textbf{mathematical structuralism} applied to knowledge
+representation: identity is relational, not intrinsic.
+
+\subsection{The Canonical Form}
+
+A tagspace can be fully serialized as TAGL text via \texttt{dump()}. From
+the TAGL Thesis document:
+\begin{quote}
+The canonical form of a tagspace is its dump --- the UTF-8 TAGL code that
+represents the tagspace (and can be loaded).
+\end{quote}
+
+The dump is not a record of a structure. It \emph{is} the structure, expressed
+in TAGL. The tagspace is its own specification.
+
+\section{Summary}
+
+Table~\ref{tab:summary} collects the mathematical structures identified in the
+tagd source and maps each to its realization in code and TAGL.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{Mathematical Structure} & \textbf{tagd Realization} & \textbf{Source} \\
+\midrule
+Set & All tags $T$ in a tagspace & \texttt{tagd.h: tag\_set} \\
+Rooted tree & Subordinate relations from \texttt{\_entity} & \texttt{tagd-README.md} \\
+Partial order (poset) & Rank prefix containership $\sqsubseteq$ & \texttt{rank.h: contains()} \\
+Lexicographic total order & Rank byte string comparison & \texttt{rank.h: operator<} \\
+Alexandrov topology & Upward-closed subtrees as open sets & \texttt{rank.h}, \texttt{tagd.cc} \\
+Universal base subspace & Hard tag set $H$ & \texttt{hard-tags.h} \\
+Fiber / attached structure & Predicate sets $P(t)$ at each tag & \texttt{tagd.h: predicate\_set} \\
+Continuous map & Order-preserving tagspace map & \texttt{tagd.cc: merge\_containing\_tags} \\
+Canonical serialization & \texttt{dump()} in TAGL canonical form & \texttt{TAGL-spec.md} \\
+\bottomrule
+\end{tabular}
+\caption{Mathematical structures and their tagd source realizations.}
+\label{tab:summary}
+\end{table}
+
+\section{Conclusion}
+
+The tagd system is not merely a database or a knowledge graph. It is a
+\textbf{topological space of structured meaning}. Tags are points. Subordinate
+relations give the space its shape. Ranks encode that shape as a partial order.
+The Alexandrov topology makes the shape mathematically precise. Predicates
+attach additional structure at each point as a fiber over the base topology.
+And the hard tag base ensures that every tagspace shares the same foundational
+geometry.
+
+TAGL is the language for acting on this space: defining points, querying
+regions, transforming structure. Every TAGL statement is a topological
+operation.
+
+The vision that \emph{information is structural} --- that meaning comes from
+shape, not from labels --- is not a design philosophy. It is a theorem about
+how the system works.
+
+\begin{thebibliography}{9}
+
+\bibitem{hardtags}
+tagd source code, \texttt{tagd/include/tagd/hard-tags.h}.
+Hard tag definitions and axioms.
+
+\bibitem{rankh}
+tagd source code, \texttt{tagd/include/tagd/rank.h}.
+Rank structure, prefix order, and \texttt{contains()} implementation.
+
+\bibitem{tagdh}
+tagd source code, \texttt{tagd/include/tagd.h}.
+\texttt{abstract\_tag}, \texttt{predicate\_set}, and tag set operations.
+
+\bibitem{tagdcc}
+tagd source code, \texttt{tagd/src/tagd.cc}.
+\texttt{merge\_containing\_tags} and merge operations.
+
+\bibitem{spec}
+\textit{TAGL Specification}, \texttt{TAGL-spec.md}.
+Language specification and semantic model.
+
+\bibitem{readme}
+\textit{tagd README}, \texttt{tagd-README.md}.
+Working examples and TAGL tutorial.
+
+\bibitem{bootstrap}
+\textit{Bootstrap Dump Grid}, \texttt{bootstrap-dump-grid.txt}.
+Concrete tagspace rank assignments.
+
+\end{thebibliography}
+
+\end{document}

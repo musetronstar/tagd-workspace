@@ -161,3 +161,9 @@ for Tasks 1-4; Then, provide a plan for Task 5.
   Immediate next step: Read tagd/tagl/include/tagl.h and tagd/tagl/src/tagl.cc (scanner class definition + parse_tok callback) to validate the
   callback design — those are the two files most likely to inform how tagr_scanner should be structured. Shall I proceed?
 
+## Process Addendum
+
+* Subtask reviews are most useful when each task is classified as `complete`, `partial`, `blocked`, or `open`, with one evidence line per classification.
+* TODO comments and design notes should be treated as open design intent, not automatically as defects.
+* Review reports should distinguish current passing behavior from intended future behavior so later archive decisions do not confuse plans with delivered work.
+* If a task depends on current test status, the review should name the exact verification command instead of relying only on historical commit intent.
