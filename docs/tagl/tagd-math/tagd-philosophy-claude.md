@@ -13,7 +13,7 @@ This document names those roots — not to claim that tagd was derived from
 them, but to show that tagd belongs to a serious intellectual tradition, and
 that tradition can illuminate what tagd is and where it can go.
 
-The central claim common to all these traditions:
+The central claim common to all these traditions: "To be, is to be related"
 
 > **Identity is not intrinsic. It is relational. A thing is what it is
 > because of its position in a structure of relations.**
