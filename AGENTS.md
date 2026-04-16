@@ -16,7 +16,7 @@ If the user explicitly provides the task to follow, use that instead.
 
 * `~next` asks for the next meaningful TDD iteration from the current checkpoint.
 * `~status` asks for worktree status and checkpoint readiness.
-* `~/...` is a home-directory path prefix, not a meta-command.
+* `~/*` is a home-directory path prefix, not a meta-command.
 
 ## Workflow
 
