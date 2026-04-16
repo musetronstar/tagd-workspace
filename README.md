@@ -10,11 +10,15 @@ This workspace supports TAGLization work across linked repositories.
 
 ## Structure
 
+* `TASKS.d/` task files
+* `skills/` workspace meta-command skills
+
+Git Worktrees:
 * `tagd/` core semantic-relational database and TAGL implementation
 * `tagd-simple-english/` Simple English dictionary source and related app work
 * `tagr/` natural language to TAGL translator
-* `TASKS.d/` task files
-* `skills/` workspace meta-command skills
+* `tagd-nlp/` tagd NLP resources
+* `tagd-ai/` tagd AI models
 
 ## Notes
 
