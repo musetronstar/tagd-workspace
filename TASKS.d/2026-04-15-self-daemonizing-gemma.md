@@ -1,5 +1,9 @@
 # Task
 
+## Status
+
+* PENDING: no non-archive report in `out/*.md` establishes completion; what is left is the client/daemon UNIX-socket implementation and its tests.
+
 Turn `bin/gemma.py` into a self-daemonizing local client for `google/gemma-4-E2B-it` using a UNIX socket. Default invocation should ensure a daemon is available, send one request, print only the model response to `stdout`, and exit. `--daemon` should run the long-lived server process, load the model once, serve multiple requests, reset an idle shutdown timer on each request, and exit after a configurable idle period.
 
 ## Scope
@@ -82,4 +86,3 @@ Follow `docs/ai-assisted-dev-doctrine.md`.
 2. test results
 3. open issues or observations
 4. suggested concise git commit message
-

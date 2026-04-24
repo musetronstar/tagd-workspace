@@ -1,5 +1,9 @@
 # Task
 
+## Status
+
+* PENDING: no non-archive report in `out/*.md` establishes completion; what is left is the design/documentation subset definition requested by this task.
+
 Define the minimal TAGL language development subset needed to express a
 CSV/TSV-to-TAGL ingestion pipeline as a TAGL program.
 

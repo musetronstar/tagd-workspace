@@ -1,5 +1,9 @@
 # Task
 
+## Status
+
+* COMPLETE: the parser teardown crash and syntax-error cleanup regression were fixed; `Tester` and `TagdUrlTester` pass per `out/2026-04-06-scanner-parser-tagdurl-status-report.md`.
+
 Find and fix parser cleanup and syntax-error bugs exposed by the expanded TAGL
 and tagdurl tests, starting with the crash that appears after `test_query_tag`
 and reproduces through `TAGL::driver::free_parser()`.

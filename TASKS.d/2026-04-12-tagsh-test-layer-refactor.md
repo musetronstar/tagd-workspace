@@ -1,5 +1,9 @@
 # Task
 
+## Status
+
+* PENDING: the CRUD batch was completed, but the URL/search migration batch is still outstanding; this task remains active per `out/2026-04-12-archiving-report.md`.
+
 Refactor `tagd/tagsh/tests` so `tester.exp` and related expect coverage are reserved for true shell and process behavior, while logger behavior, parser-owned behavior, and other lower-layer contracts move to the fastest in-process test layer that actually owns them. The desired structural change is a readable, durable test split: `tagsh` expect tests cover prompts, shell commands, argv/process wiring, and other terminal-facing behavior; `tagsh`, `tagl`, and `tagd` unit or in-process tests cover logger routing, parser and callback behavior, and output contracts that do not require spawning a shell.
 
 ## Principles

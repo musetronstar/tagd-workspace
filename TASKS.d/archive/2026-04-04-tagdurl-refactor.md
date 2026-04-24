@@ -1,5 +1,9 @@
 # Task
 
+## Status
+
+* COMPLETE: standalone tagdurl translation moved into `tagl`, `httagd::scan_tagdurl_path` was retired, and only HTTP transport composition intentionally remains in `httagd`, per `out/2026-04-06-scanner-parser-tagdurl-status-report.md`.
+
 Refactor tagdurl handling out of `httagd` manual path parsing and into the
 `tagl` scanner/parser pipeline so tagdurls are TAGLized by `re2c`/Lemon rather
 than by ad hoc transport-side parsing.

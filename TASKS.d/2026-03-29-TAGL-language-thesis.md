@@ -1,5 +1,9 @@
 # Task: TAGL Design Thesis
 
+## Status
+
+* PENDING: no non-archive report in `out/*.md` establishes completion; what is left is the thesis/design-document proofread and explicit DONE/TODO classification requested by the task.
+
 Please check and proofread for correctness. I want to use specific language within the domain of computer science & language design.
 
 This is a design of the TAGL language as we wish it to be, not as it actually is now - we should mark features as DONE or some level of TODO.
@@ -97,6 +101,5 @@ Follow `docs/ai-assisted-dev-doctrine.md`
 1. summary of changes
 2. test results
 3. open issues, concerns or interesting observations
-
 
 

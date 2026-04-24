@@ -1,12 +1,20 @@
 # tagr-c++ Scanner Tokenizer Tasks
 
+## Status
+
+* COMPLETE: Task 1 — implemented and passing per `out/2026-03-26-claude-tagr-scanner-prompt.md` and `out/2026-04-12-archiving-report.md`.
+* COMPLETE: Task 2 — complete as a review/understanding checkpoint; the removal itself was user-done and the TODO intent was preserved per `out/2026-03-26-claude-tagr-scanner-prompt.md`.
+* COMPLETE: Task 3 — implemented and passing per `out/2026-03-26-claude-tagr-scanner-prompt.md` and `out/2026-04-12-archiving-report.md`.
+* COMPLETE: Task 4 — implemented for the current trie/offset behavior; the positional-output TODO remains future design intent, not an unclosed deliverable for this batch, per `out/2026-03-26-claude-tagr-scanner-prompt.md`.
+* PENDING: Task 5 — remains planning-only; what is left is the actual re2c scanner replacement and its test-first implementation per `out/2026-04-12-archiving-report.md` and `out/2026-03-26-claude-tagr-scanner-plan-5.md`.
+
 Develop `tagr/tagr-c++` as a *tokenizer*:
 + use `tagd` logging facilities
 + use `tagd:error` reporting facilities
 + use a TAGL inspired/derived scanner
 + lookup tagd POS for tag-like patterns
 
-## Task 1
+## Task 1 — COMPLETE
 
 Log <matched tokens> and <token type> string as a TSV line.
 
@@ -32,7 +40,7 @@ of  TOK_SUB_RELATOR
 r@nd0m  TOK_UNKNOWN
 ```
 
-## Task 2 Remove frequency table from C++
+## Task 2 Remove frequency table from C++ — COMPLETE
 
 User completed these changes (see `git log` to verify understanding):
 * Removed any code, comments, fragments or otherwise leftover from the former desire
@@ -46,7 +54,7 @@ to print token frequency in C++. Make it as if that idea never existed.
 * Verify to the user the agent understands our goals.
 * Only upon validation from user - proceed
 
-## Task 3 Tokens Reverse Frequency Table in Bash
+## Task 3 Tokens Reverse Frequency Table in Bash — COMPLETE
 
 Print tagr token reverse frequency table of tagr output tokens for an input stream
 
@@ -71,7 +79,7 @@ I created bash script `bin/tagr-rev-freq-tokens.sh`.
    + No difference - no output - success - exit 0
 
 
-## Task 4 - Print Trie (duplicate in input)
+## Task 4 - Print Trie (duplicate in input) — COMPLETE
 
 * construct trie of tokens and their
   + position within the input stream
@@ -80,7 +88,7 @@ I created bash script `bin/tagr-rev-freq-tokens.sh`.
 	+  TODO prints to the trie to the output stream (defalut STDOUT).
 	   the output bytes should match exactly the normalized input stream bytes (TODO: normalize input bytes)
 
-## Task 5 (tagr architecture report)
+## Task 5 (tagr architecture report) — PENDING
 
 Analysis & Generate Feasibility Report to accomplish:
 * remove tokenization being done in the `tagr_tokenizer:scan()` method

@@ -1,5 +1,9 @@
 # Task
 
+## Status
+
+* PENDING: no non-archive report in `out/*.md` establishes completion; what is left is the `_integer` / `_float` hard-tag split, scanner token split, and spec/documentation work requested here.
+
 Introduce `_integer` and `_float` as primitive numeric hard tags and split
 the single `TOK_QUANTIFIER` scanner token into two distinct numbers: `TOK_INTEGER` and
 `TOK_FLOAT` tokens. `TOK_QUANTIFIER` is going away, but parser

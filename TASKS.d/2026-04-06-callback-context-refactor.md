@@ -1,5 +1,9 @@
 # Task
 
+## Status
+
+* PENDING: callback ownership/wiring is still implicit and side-effectful; what is left is the explicit callback-context boundary cleanup called out in `out/2026-04-06-refactor-closeout-audit.md`.
+
 Refactor the `tagl` callback boundary so callback execution context is passed
 explicitly rather than being reached through hidden mutable driver back-pointers.
 

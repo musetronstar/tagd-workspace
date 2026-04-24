@@ -1,5 +1,9 @@
 # tagd Agent Workspace
 
+## Status
+
+* PENDING: a large number of `-->>` commented entries still remain in `simple-english.tagl`; this is an ongoing corpus task, not a closed batch per `out/2026-04-12-archiving-report.md`.
+
 ## Git Worktrees
 This workspace contains git worktrees for these repositories:
 * `tagd/` tagd semantic-relational database and TAGL languge

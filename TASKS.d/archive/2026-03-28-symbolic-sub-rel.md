@@ -1,5 +1,9 @@
 # Task
 
+## Status
+
+* COMPLETE: operator-only symbolic aliases `-^` and `->` are implemented in the parser model; the remaining note is only that this work is adjacent to the broader parser refactor, per `out/2026-04-06-scanner-parser-tagdurl-status-report.md`.
+
 Add operator-only symbolic aliases for the foundational TAGL relators so that `-^` is accepted as the symbolic alias for `_sub` and `->` is accepted as the symbolic alias for `_rel`, while preserving the canonical hard-tag strings and existing hard-tag behavior. The symbols must be parsed only in operator positions; the canonical hard tags `_sub` and `_rel` must continue to work anywhere the current grammar allows them as tags or relators.
 
 ## Scope

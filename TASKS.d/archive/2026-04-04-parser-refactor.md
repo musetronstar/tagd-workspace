@@ -1,5 +1,9 @@
 # Task
 
+## Status
+
+* COMPLETE: the parser was substantially simplified and ownership cleanup landed; what remains is only later TODO triage such as stale comments and separate semantic follow-up, per `out/2026-04-06-scanner-parser-tagdurl-status-report.md` and `out/2026-04-06-refactor-closeout-audit.md`.
+
 Our lemon parser implementation in `tagd/tagl/src/parser.y` is a mess and is error prone in freeing tokens.
 
 We need to refactor the TAGL parser. I want to first pull out any code that can be out of parser.y so that is is clean and minimal. The obvious target to put the code is `tagl.cc`, but it is already crowded. Propose other existing or new files to puth that code other that `tagl.cc` when appropriate.

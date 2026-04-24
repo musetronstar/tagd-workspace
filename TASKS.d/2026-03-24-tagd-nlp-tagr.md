@@ -1,5 +1,9 @@
 # Task
 
+## Status
+
+* PENDING: this remains an ongoing multi-repository program, not a closeable single task; what is left is the broader TAGL and `tagr-c++` development program itself, per `out/2026-04-12-archiving-report.md`.
+
 Start eating our own dogfood and use `tagr-c++` in place of `tagr.py` in the
 translation of VOA Word Book into TAGL.
 
@@ -90,4 +94,3 @@ Follow `docs/ai-assisted-dev-doctrine.md`
 1. summary of changes
 2. test results
 3. open issues, concerns or interesting observations
-

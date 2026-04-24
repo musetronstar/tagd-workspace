@@ -1,5 +1,9 @@
 # tagdurl scanner redo task
 
+## Status
+
+* COMPLETE: the critique/redesign objective was effectively carried out; parsing moved into `tagl` and only transport behavior remained in `httagd`, per `out/2026-04-06-scanner-parser-tagdurl-status-report.md`.
+
 This task is incomplete:
 
 TASKS.d/2026-03-20-14-12-tagdurl-scanner.md

@@ -1,5 +1,9 @@
 # Task
 
+## Status
+
+* COMPLETE: parse-lifetime token storage and stable `TokenText` slices were delivered and directly tested, per `out/2026-04-06-scanner-parser-tagdurl-status-report.md`.
+
 Refactor TAGL scanner token storage so parser token text can be represented as
 stable slices rather than heap-allocated `std::string*` values for every token.
 
