@@ -511,19 +511,24 @@ decomposition:
 \begin{lstlisting}[style=cpp, caption={Two-layer structure in abstract\_tag (tagd.h)}]
 class abstract_tag {
     tagd::rank    _rank;       // position in the base space
-    predicate_set relations;   // fiber: additional data at this point
+    predicate_set _relations;  // fiber: additional data at this point
 };
 \end{lstlisting}
 
 \section{Structural Identity}
+
+\begin{center}
+    \textit{``To be, is to be related.''} \\[0.5ex]
+    \small --- Maxim of TAGL
+\end{center}
 
 \subsection{Identity Is Position}
 
 The deepest mathematical claim of the tagd system is that a tag's identity is
 entirely structural. The TAGL specification defines:
 \begin{quote}
-\textbf{Structural identity}: the identity of a tag defined by its subordinate
-relation (rank) and predicate\_list.
+\textbf{Structural identity}: its position in the tagspace hierarchy, given by
+its rank, defined by its subordinate relation (aka identity relation).
 \end{quote}
 
 A tag \texttt{dog} is not \texttt{dog} because of the string \texttt{"dog"}.
@@ -547,13 +552,289 @@ represents the tagspace (and can be loaded).
 The dump is not a record of a structure. It \emph{is} the structure, expressed
 in TAGL. The tagspace is its own specification.
 
+\section{Deeper Structures}
+
+The foundations established in Sections 1--8 are sufficient to describe what
+the tagd system \emph{is}. This section describes what it \emph{implies} ---
+deeper mathematical structures that emerge from those foundations and illuminate
+how the system behaves.
+
+\subsection{The Adjunction Between Order and Topology}
+
+The relationship between the tagspace as a partial order and the tagspace as a
+topological space is not incidental. It is a formal \textbf{adjunction} --- one
+of the most fundamental relationships in category theory.
+
+Two functors mediate between the two views:
+
+\begin{itemize}
+  \item $A : \mathbf{PreOrd} \to \mathbf{Top}$ (the \emph{Alexandrov functor})
+        takes the rank prefix partial order on tags and produces the Alexandrov
+        topological space described in Section~4.
+  \item $S : \mathbf{Top} \to \mathbf{PreOrd}$ (the \emph{specialization
+        functor}) takes any topological space and recovers a preorder:
+        $a \leq b$ iff every open set containing $a$ also contains $b$.
+\end{itemize}
+
+These functors form an adjunction: $A$ is left adjoint to $S$, written
+$A \dashv S$. Applying both in sequence recovers the original structure:
+$S(A(P)) \cong P$.
+
+In tagd, this adjunction is visible in the two-step construction of a fully
+hydrated tag. A tag begins as a semantic object --- identity, subordinate
+relation, position --- living in the preorder. When its rank is assigned, it is
+lifted into the Alexandrov topological space. The rank upgrade is the
+\textbf{unit of the adjunction}: the reflection morphism that moves a tag from
+the order-theoretic world into the topological world while preserving its
+identity on the underlying set.
+
+\begin{lstlisting}[style=cpp, caption={The reflection morphism: lifting a tag from PreOrd into the Alexandrov space}]
+// Semantic tag: lives in PreOrd
+tagd::abstract_tag semantic(id, sub_relator, super_object, pos);
+
+// Reflection map: lifts into the Alexandrov space
+tagd::abstract_tag hydrated = rank.empty()
+    ? std::move(semantic)
+    : tagd::abstract_tag(semantic, rank);  // <- unit of the adjunction
+\end{lstlisting}
+
+The reflection morphism is:
+\begin{itemize}
+  \item \textbf{Bijective} on the underlying set of tags (same identity, same
+        element)
+  \item \textbf{Continuous} with respect to the Alexandrov topology
+  \item \textbf{Order-reflecting} (preserves and reflects the subordinate
+        relation via rank prefixes)
+\end{itemize}
+
+This is a \textbf{bimorphism} in the category of preorders and topological
+spaces.
+
+\subsection{Topological Properties of the Tagspace}
+
+Because the tagspace carries an Alexandrov topology, it inherits a family of
+topological properties that have direct operational consequences.
+
+\textbf{First countable.} Every tag $x$ has a smallest open neighbourhood: the
+set of all tags whose rank has $r(x)$ as a prefix --- all descendants of $x$
+plus $x$ itself. This smallest neighbourhood is the local base at $x$. It is
+why rank-based traversal (\texttt{get\_children}, \texttt{related}) is
+efficient: the topology guarantees a finite, well-defined local structure at
+every point.
+
+\textbf{Locally compact.} For any tag $x$, the smallest open neighbourhood
+$U(x)$ is compact in the Alexandrov topology. Any open cover of $U(x)$ must
+contain $U(x)$ itself, giving a trivial finite subcover. This is why queries
+over subtrees are well-behaved: every neighbourhood is compact by construction.
+
+\textbf{Locally path connected.} Between any two comparable tags
+$x \sqsubseteq y$, there is a path up the subordinate chain via successive
+super-object steps. The smallest neighbourhood of any tag is connected (it is
+an upper set), so the space is locally path-connected in the order-theoretic
+sense.
+
+\textbf{Subspaces and products are Alexandrov-discrete.} Any subset of tags ---
+for example, the result of a \texttt{query()} or all descendants of a given tag
+--- inherits the Alexandrov structure. Query results compose correctly because
+they are subspaces of the same topological space, not alien data structures.
+
+\subsection{Modal Operators: Interior and Closure}
+\label{sec:modal}
+
+In any topological space, the \textbf{interior} and \textbf{closure} operators
+are well-defined. In the tagspace, they carry semantic meaning.
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Topological operator} & \textbf{Modal logic} & \textbf{tagd meaning} \\
+\midrule
+Interior $\mathrm{int}(U)$ & Necessarily ($\square$) & Properties true in all superiors of a tag \\
+Closure $\mathrm{cl}(U)$ & Possibly ($\lozenge$) & Properties reachable via any subordinate \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\bigskip
+
+The tagspace is therefore an \textbf{interior algebra} --- a Boolean algebra
+equipped with an interior operator satisfying the Kuratowski axioms. The
+\texttt{related()}, \texttt{has\_relator()}, and \texttt{get\_children()}
+families of functions are the operational realization of these modal operators.
+
+Furthermore, because the Alexandrov topology arises from a partial order, the
+tagspace constitutes a \textbf{Kripke frame}: a set of worlds (tags) equipped
+with an accessibility relation (the subordinate order). A predicate $P$ is
+\emph{necessarily true} at tag $x$ (written $\square P(x)$) if $P$ holds at
+every tag above $x$. It is \emph{possibly true} ($\lozenge P(x)$) if $P$
+holds at some tag below $x$.
+
+\begin{lstlisting}[style=tagl, caption={Modal reading of TAGL predicates}]
+-- "dog necessarily _has legs" if all ancestors of dog also _has legs
+-- "animal possibly _can bark" if some descendant of animal _can bark
+\end{lstlisting}
+
+This gives TAGL queries a natural modal interpretation without any additional
+machinery. The topology provides the modal semantics for free.
+
+\subsection{Constructive Existence: Tags as Witnesses}
+\label{sec:constructive}
+
+The trail from Kripke semantics through intuitionistic logic leads to a
+foundational observation about how tagd represents knowledge.
+
+In \textbf{classical mathematics}, an existence proof may assert ``there exists
+an object with property $P$'' without producing one. In \textbf{constructive
+mathematics}, existence requires a witness --- an explicit object that
+demonstrates the property.
+
+The tagd system is constructive by design. A tag does not \emph{exist} in the
+tagspace until it is explicitly constructed with a subordinate relation. The
+TAGL rule --- \emph{a tag MUST have exactly one subordinate relation} --- is a
+constructive existence condition. No witness, no tag.
+
+After the const-correctness work (Phase 9B), this constructive character is
+enforced in the type system: tags are built once, immutably, in a single
+construction step. There is no ``assert existence, hydrate later'' pattern. The
+construction \emph{is} the proof of existence.
+
+\begin{lstlisting}[style=cpp, caption={One-shot construction as constructive existence}]
+// Constructive: the tag is its own existence proof.
+// No tag exists until this line executes.
+tagd::abstract_tag t(id, sub_relator, super_object, pos);
+\end{lstlisting}
+
+This aligns the implementation with \textbf{intuitionistic logic}, where a
+proof of $\exists x.\, P(x)$ is a pair $(t, p)$ --- a term $t$ and a proof $p$
+that $P(t)$ holds. In tagd: the term is the tag, and the proof is its rank and
+subordinate relation.
+
+\subsection{Martin-L\"{o}f Type Theory and Dependent Structure}
+\label{sec:mltt}
+
+The constructive character of tagd points toward \textbf{Martin-L\"{o}f Type
+Theory} (MLTT) --- the most rigorous modern foundation for constructive
+mathematics, and the theoretical basis for proof assistants such as Agda, Lean,
+and Coq.
+
+In MLTT, propositions are types and proofs are programs (the Curry-Howard
+correspondence). Every existence claim must be witnessed by an explicit term
+inhabiting the corresponding type.
+
+The tagspace can be read as a fragment of MLTT:
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\textbf{MLTT concept} & \textbf{tagd realization} \\
+\midrule
+Type & Tag position in the tagspace (defined by rank) \\
+Term inhabiting a type & A concrete tag at that position \\
+Dependent type & Rank-dependent tag structure \\
+Sigma type $\Sigma_{x:A}\, B(x)$ & A tag together with its predicate fiber \\
+Identity type & Immutable structural identity: same rank $=$ same type \\
+Universe & The tagspace as a whole \\
+Constructive proof & One-shot tag construction; \texttt{dump()} as canonical form \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\bigskip
+
+The rank function $r : T \to \Sigma^*$ is a \textbf{dependent type family}:
+the structural type of a tag depends on its rank value. Two tags at different
+ranks are, in the type-theoretic sense, of different types --- even if their
+nominal labels are similar.
+
+\begin{remark}
+Making identity immutable in the C++ type system (Phase~9B) is not merely a
+software quality improvement. It is a \textbf{formalization step}: the C++
+types now enforce what MLTT would express as an identity type. Once a tag's
+rank cannot be mutated, the fixed-point property of \texttt{\_entity} is not
+just documented --- it is an axiom enforced by the compiler.
+\end{remark}
+
+\subsection{Computation as Topological Traversal}
+
+The introduction of functions as tags in TAGL (Section~7 of the TAGL
+specification) completes the arc from the tagspace as a knowledge structure
+to the tagspace as a computing environment. The mathematical consequences
+are significant.
+
+\textbf{Functions are tags.} Defining a function is a \texttt{>>} PUT
+operation --- a constructive existence claim. The function does not exist
+until it is placed in the tagspace with a subordinate relation. It is subject
+to the same identity rules, the same rank structure, and the same topological
+properties as any other tag. It can be queried, inspected, versioned, and
+compared.
+
+\begin{lstlisting}[style=tagl, caption={A function defined as a tag via PUT}]
+>> greet($name) _is_a function
+    -> "Hello, " ++ $name;
+\end{lstlisting}
+
+This is not syntactic convenience. It means the computation is \emph{inside}
+the topological space, not outside it.
+
+\textbf{A function call is a topological operation.} A call navigates from
+the function tag (a point in $T$) through its predicate fiber (the body) to
+a result. Combined with the Curry-Howard correspondence from
+Section~\ref{sec:mltt}: \emph{tags are types, functions are proofs, and
+evaluation is topological traversal}.
+
+\textbf{Single-assignment variables are proof terms.} Variables (\texttt{\$name})
+follow single-assignment semantics --- immutable after binding. This is
+directly consistent with the constructive / MLTT foundation of
+Section~\ref{sec:constructive}: a variable binding is a term inhabiting a
+type. Once constructed, it cannot be mutated, for the same reason a tag's
+rank cannot be mutated after construction.
+
+\textbf{Guards are modal assertions.} The \texttt{\_when} guard syntax
+exposes the Kripke frame structure of the tagspace directly in the language.
+A guard using $\square$ asserts necessity:
+
+\begin{lstlisting}[style=tagl, caption={Modal guard using the necessity operator}]
+>> area($shape) _when [](has radius) ->
+    3.14159 * $shape.radius ** 2;
+\end{lstlisting}
+
+This asserts that the function applies only when \texttt{\_has radius} is
+\emph{necessarily} true --- true at this tag and all its ancestors in the
+Alexandrov topology. The modal operators $\square$ and $\lozenge$ are not
+new machinery; they are the interior and closure operators of
+Section~\ref{sec:modal}, exposed as first-class language constructs.
+
+\textbf{Async processes communicate via continuous maps.} The Erlang-style
+process model in TAGL sends TAGL text through buffers between isolated
+processes. Topologically, a channel between two tagspace-aware processes is
+a \emph{continuous map} --- an order-preserving transformation that preserves
+the subordinate structure. The hard tag base $H$ is the common topological
+ground that makes inter-process TAGL intelligible: both ends of a channel
+share the universal invariant subspace, guaranteeing that the structural
+meaning of hard-tag constructs is preserved across the channel boundary.
+
+The three-part alignment is now complete:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Layer} & \textbf{Structure} & \textbf{Mathematical object} \\
+\midrule
+Knowledge    & Tags and subordinate relations          & Alexandrov topological space \\
+Meaning      & Predicates at each tag                 & Fiber over the base space \\
+Computation  & Functions as tags, evaluation as traversal & Topological map + Kripke semantics \\
+\bottomrule
+\end{tabular}
+\end{center}
+
 \section{Summary}
 
-Table~\ref{tab:summary} collects the mathematical structures identified in the
-tagd source and maps each to its realization in code and TAGL.
+Table~\ref{tab:summary} collects all mathematical structures identified in the
+tagd source, including those from the deeper structures of Section~9.
 
 \begin{table}[h]
 \centering
+\small
 \begin{tabular}{lll}
 \toprule
 \textbf{Mathematical Structure} & \textbf{tagd Realization} & \textbf{Source} \\
@@ -567,6 +848,16 @@ Universal base subspace & Hard tag set $H$ & \texttt{hard-tags.h} \\
 Fiber / attached structure & Predicate sets $P(t)$ at each tag & \texttt{tagd.h: predicate\_set} \\
 Continuous map & Order-preserving tagspace map & \texttt{tagd.cc: merge\_containing\_tags} \\
 Canonical serialization & \texttt{dump()} in TAGL canonical form & \texttt{TAGL-spec.md} \\
+Adjunction ($A \dashv S$) & Rank upgrade as reflection morphism & \texttt{tagd.cc: abstract\_tag} ctor \\
+First countable & Smallest open nbhd via rank prefix & \texttt{rank.h: contains()} \\
+Locally compact & Subtree queries always well-behaved & \texttt{tagd.cc: get\_children} \\
+Interior algebra / modal ops & \texttt{related()}, \texttt{has\_relator()} as $\square$/$\lozenge$ & \texttt{tagd.h} \\
+Kripke frame & Subordinate order as accessibility relation & \texttt{rank.h}, \texttt{tagd.cc} \\
+Constructive existence & One-shot tag construction as witness & \texttt{tagd.h: abstract\_tag} ctor \\
+Dependent type (MLTT) & Rank-dependent tag structure & \texttt{rank.h}, \texttt{tagd.h} \\
+Functions as tags & PUT-defined executable tags in tagspace & \texttt{TAGL-spec.md} \S7 \\
+Computation as traversal & Function call as topological map through fiber & \texttt{TAGL-spec.md} \S7 \\
+Modal guards & \texttt{\_when} $\square$/$\lozenge$ as interior/closure in syntax & \texttt{TAGL-spec.md} \S7.4 \\
 \bottomrule
 \end{tabular}
 \caption{Mathematical structures and their tagd source realizations.}
@@ -586,6 +877,16 @@ geometry.
 TAGL is the language for acting on this space: defining points, querying
 regions, transforming structure. Every TAGL statement is a topological
 operation.
+
+When functions enter the tagspace as tags, computation becomes part of the
+same structure. A function call is a traversal from a point in $T$ through
+its predicate fiber to a result. Guards express modal assertions over the
+Kripke frame. Async processes communicate via continuous maps across the
+shared hard tag base. Knowledge, meaning, and computation are no longer
+separate concerns --- they are three layers of the same topological object.
+
+The Curry-Howard correspondence completes the picture: tags are types,
+functions are proofs, and evaluation is topological traversal.
 
 The vision that \emph{information is structural} --- that meaning comes from
 shape, not from labels --- is not a design philosophy. It is a theorem about
@@ -612,6 +913,10 @@ tagd source code, \texttt{tagd/src/tagd.cc}.
 \bibitem{spec}
 \textit{TAGL Specification}, \texttt{TAGL-spec.md}.
 Language specification and semantic model.
+
+\bibitem{thesis}
+\textit{TAGL Design Thesis}, \texttt{TAGL-Thesis.md}.
+Language design document including function model and computation semantics.
 
 \bibitem{readme}
 \textit{tagd README}, \texttt{tagd-README.md}.

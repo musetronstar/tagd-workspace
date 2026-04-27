@@ -337,51 +337,106 @@ TAGL statements are evaluated against a tagspace.
   + a relator
   + an object_list
 
-## 7. Hard Tags
+### 7. Functions
+
+Functions in TAGL are first-class tags that carry executable behavior. Defining a function is performed with the `>>` (CMD_PUT) command.
+
+#### 7.1 Named Functions
+
+```tagl
+>> name($param1, $param2) _when guard -> 
+    body ;
+
+>> name($param1, $param2) -> 
+    body.
+```
+
+#### 7.2 Anonymous Functions (Lambdas)
+
+```tagl
+$var = ($param1, $param2) -> 
+    body ;
+```
+
+#### 7.3 Variables
+
+- Variables are prefixed with `$`.
+- Variables are single-assignment (immutable after binding).
+- Assignment uses `=`.
+
+```tagl
+$request = get_current_request($S);
+$response = handle_http_request($request, $S);
+```
+
+#### 7.4 Guards
+
+Guards are introduced with `_when` and support modal and topological expressions:
+
+- `□` → necessity (`_necessarily`)
+- `◇` → possibility (`_possibly`)
+- `-^` → subordinate relation (`_sub`)
+
+#### 7.5 Symbolic Aliases
+
+| Symbol | Maps to        | Mathematical Meaning                  |
+|--------|----------------|---------------------------------------|
+| `-^`   | `_sub`         | specialization / containership        |
+| `~>`   | `_rel`         | relator / horizontal relation         |
+| `□`    | `_necessarily` | necessity (true in all accessible worlds) |
+| `◇`    | `_possibly`    | possibility (true in some world)      |
+
+#### 7.6 Recursion and Control Flow
+
+TAGL has no looping constructs. All iteration is expressed via recursion. The runtime SHOULD optimize tail calls.
+
+Closures are supported: lambdas may capture `$variables` from the lexical scope in which they are defined.
+
+## 8. Hard Tags
 
 Core:
 * `_entity`
 * `_sub`
 * `_rel`
 
-## 8. Query Semantics
+## 9. Query Semantics
 
 * Queries traverse sub relations
 * `*` matches any predicate
 
-## 9. Context and Referents
+## 10. Context and Referents
 
 ```tagl
 %% _context example;
 ```
 
-## 10. URLs
+## 11. URLs
 
 * URLs are valid TAGL tokens
 
-## 11. Errors
+## 12. Errors
 
 * Errors are represented as tags
 
-## 12. Examples
+## 13. Examples
 
 ```tagl
 >> mammal _type_of animal;
 >> dog _is_a mammal;
 ```
 
-## 13. Implementation Notes (Non-Normative)
+## 14. Implementation Notes (Non-Normative)
 
 * Scanner: `re2c`
 * Parser: `lemon`
 
-## 14. Future Work
+## 15. Future Work
 
 * formal EBNF grammar
 * contradiction handling
 * revision model
 
-## 15. References
+## 16. References
 
 * `README.md`
 * `hard-tags.h`
