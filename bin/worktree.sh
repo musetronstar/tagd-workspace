@@ -54,11 +54,6 @@ ensure_missing_path() {
 	[[ ! -e "$path" ]] || die "target path already exists: $path"
 }
 
-ensure_existing_path() {
-	local path="$1"
-	[[ -e "$path" ]] || die "target path not found: $path"
-}
-
 branch_exists() {
 	local repo_path="$1"
 	local branch_name="$2"
@@ -95,13 +90,14 @@ remove_repo_worktree() {
 	local repo_name="$4"
 
 	prune_repo_worktrees "$source_repo"
-	worktree_exists "$source_repo" "$target_path" ||
-		die "worktree not registered in $repo_name: $target_path"
-	git -C "$source_repo" worktree remove "$target_path"
-	prune_repo_worktrees "$source_repo"
-	branch_exists "$source_repo" "$branch_name" ||
-		die "branch not found in $repo_name after worktree removal: $branch_name"
-	git -C "$source_repo" branch -D "$branch_name"
+	if worktree_exists "$source_repo" "$target_path"; then
+		git -C "$source_repo" worktree remove "$target_path"
+		prune_repo_worktrees "$source_repo"
+	fi
+
+	if branch_exists "$source_repo" "$branch_name"; then
+		git -C "$source_repo" branch -D "$branch_name"
+	fi
 }
 
 preflight_add_agent_tree() {
@@ -160,13 +156,12 @@ preflight_remove_agent_tree() {
 	local repo
 	local source_repo
 	local repo_target
+	local found=0
 
 	prune_repo_worktrees "$WORKSPACE_ROOT"
-	ensure_existing_path "$workspace_target"
-	worktree_exists "$WORKSPACE_ROOT" "$workspace_target" ||
-		die "worktree not registered in tagd-workspace: $workspace_target"
-	branch_exists "$WORKSPACE_ROOT" "$branch_name" ||
-		die "branch not found in tagd-workspace: $branch_name"
+	if worktree_exists "$WORKSPACE_ROOT" "$workspace_target" || branch_exists "$WORKSPACE_ROOT" "$branch_name"; then
+		found=1
+	fi
 
 	for repo in "${WORKTREE_REPOS[@]}"; do
 		source_repo="$PROJECTS_ROOT/$repo"
@@ -176,12 +171,12 @@ preflight_remove_agent_tree() {
 			die "configured repo is not a git repository: $source_repo"
 		require_clean_dev_repo "$source_repo" "$repo"
 		repo_target="$workspace_target/$repo"
-		ensure_existing_path "$repo_target"
-		worktree_exists "$source_repo" "$repo_target" ||
-			die "worktree not registered in $repo: $repo_target"
-		branch_exists "$source_repo" "$branch_name" ||
-			die "branch not found in $repo: $branch_name"
+		if worktree_exists "$source_repo" "$repo_target" || branch_exists "$source_repo" "$branch_name"; then
+			found=1
+		fi
 	done
+
+	[[ "$found" -eq 1 ]] || die "nothing to remove for $branch_name"
 }
 
 remove_agent_tree() {
