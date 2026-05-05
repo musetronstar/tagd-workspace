@@ -1,5 +1,11 @@
 # Task: C++23 Stage 2 — Clean Slate Pass · Phase 9B
 
+## Status
+
+* PARTIAL: Task 3's main SQLite tag population seam is implemented. `tagdb::sqlite::get(...)` now rebuilds tag identity in one shot and referent transform helpers reconstruct values instead of patching identity fields in-place.
+* PARTIAL: parser subject construction is largely aligned with the constructor-only identity goal; `make_subject(...)` constructs final subject values directly when identity is present.
+* PENDING: the phase is not complete because `abstract_tag` still exposes whole-object identity mutation seams (`swap`, assignment, `clear()`), and `tagd::event` / `tagd::url` still rewrite `_id` / `_sub_relator` / `_super_object` after construction.
+
 Capture the deferred foundational work exposed by Phase 9 Task 3: hard tags
 can become typed read-only vocabulary only if tag identity seams stop treating
 `abstract_tag` as a mutable assembly buffer. This phase is not more vocabulary
@@ -83,6 +89,21 @@ vocabulary instead of preprocessor string literals.
   is refactored, not papered over with `const_cast`, placement new, or a new
   public builder type.
 
+### Current checkpoint
+
+* Field-level identity setters are already deleted in `tagd/include/tagd.h`.
+* This task is still open because whole-object replacement remains public and
+  rewrites identity fields:
+  * `abstract_tag::swap(...)`
+  * copy assignment
+  * move assignment
+  * `abstract_tag::clear()`
+* The next iteration must decide and implement the truthful contract:
+  * either make these seams unavailable for identity-bearing values, or
+  * narrow them to internal/bridge-only usage with comments and tests that
+    preserve the claim that callers cannot mutate a tag's identity after
+    construction.
+
 ### Constraints
 
 * `abstract_tag` should remain an STL-friendly value type  const correct.
@@ -125,6 +146,16 @@ in one shot.
 * Comments explain why the parser now defers object emission until identity is
   complete.
 
+### Current checkpoint
+
+* `tagl/src/parser.y` already constructs subjects through `make_subject(...)`
+  with complete identity when `sub_relator` and `super_object` are known.
+* Treat parser work as substantially complete unless a remaining reduction is
+  found that still constructs a placeholder tag and later rewrites identity.
+* Before closing this task, audit the parser one more time and add or preserve
+  one test that exercises a subject with explicit `sub_relator` and
+  `super_object`.
+
 ### Constraints
 
 * No TAGL grammar expansion or user-visible syntax change.
@@ -146,18 +177,18 @@ cd ~/sandbox/codex/tagd-workspace && make -C tagd
 
 ---
 
-## Task 3 — Refactor sqlite hydration and transform paths to one-shot identity construction
+## Task 3 — Refactor sqlite tag population and transform paths to one-shot identity construction
 
 ### Background
 
 `sqlite.cc` is the main mechanical blocker. It default-constructs
 `abstract_tag` values and then mutates `_id`, `_sub_relator`, `_super_object`,
-and `_rank` while decoding rows, referents, and URL forms. That makes storage
-hydration depend on the very mutability this phase is meant to remove.
+and `_rank` while decoding rows, referents, and URL forms. That makes tag
+population depend on the very mutability this phase is meant to remove.
 
 ### What must be true after this task
 
-* Row hydration in `sqlite::get(...)` constructs a complete tag identity in one
+* Row tag population in `sqlite::get(...)` constructs a complete tag identity in one
   shot, then attaches relations.
 * Referent encode/decode helpers no longer rewrite identity fields on an
   already-constructed `abstract_tag`.
@@ -167,6 +198,24 @@ hydration depend on the very mutability this phase is meant to remove.
   they reduce duplication and keep the one-shot construction seam obvious.
 * The resulting code is more const-correct and easier to reason about than the
   current "default construct then patch fields" style.
+
+### Current checkpoint
+
+* `tagdb::sqlite::get(...)` is already on the desired seam:
+  * it reads row columns,
+  * constructs semantic identity in one shot,
+  * upgrades with rank,
+  * then attaches relations.
+* Referent encode/decode helpers also reconstruct values rather than rewriting
+  identity fields on existing tags.
+* `tagdb::hard_tag::get(...)` follows the same one-shot construction model.
+* What remains under this task is the non-SQLite identity-rewrite family:
+  * `tagd::event::init_id()`
+  * `tagd::url::init(...)`
+  * `tagd::url::init_hduri(...)`
+  These paths still assign `_id` and related identity fields after base object
+  construction and must be refactored to produce the final identity value
+  directly.
 
 ### Constraints
 
@@ -178,7 +227,7 @@ hydration depend on the very mutability this phase is meant to remove.
 ### TDD
 
 Use existing sqlite tests as the contract. Add at least one test that exercises
-hydration of a non-trivial tag with relations and one referent transform path,
+tag population of a non-trivial tag with relations and one referent transform path,
 proving the rebuilt value matches previous behavior.
 
 ### Verify
@@ -209,6 +258,19 @@ cd ~/sandbox/codex/tagd-workspace && make -C tagd
 * The resulting seams make a future const read-only hard tagspace more direct,
   not less.
 
+## Remaining Work Summary
+
+The current tree appears to satisfy the SQLite tag population portion of this phase,
+but the phase should stay active until these concrete items land:
+
+1. Remove or truthfully narrow public whole-object identity mutation on
+   `abstract_tag`.
+2. Refactor `tagd::event` so final identity is constructed without post-base
+   writes to `_id`, `_sub_relator`, or `_super_object`.
+3. Refactor `tagd::url` / HDURI initialization so URL identity is produced
+   directly rather than assigned into an already-constructed base object.
+4. Re-run full verification and capture a proper AAR before archiving.
+
 ## Deliverable: Concise Report
 
 For each task:
@@ -216,3 +278,4 @@ For each task:
 2. Test results: exact command and output.
 3. Open issues or non-trivial findings requiring follow-on work.
 4. Suggested git commit message.
+

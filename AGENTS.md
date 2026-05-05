@@ -25,10 +25,12 @@ Defined in the `skills` directory:
 
 * Work in reviewable, feature-sized batches.
 * Design tests first as the contract specification — written before implementation begins, not after.
-* Comments: **self-documenting code preferred**, but REQUIRED: add concise **intent comments** (**why** not "what") for
-  + non-trivial or non-obvious logic
-  * important/impactful to overall system design
-  + seams designed to STL protocols warrant a concise erudite comment
+* Comments: **self-documenting code preferred**, but REQUIRED: add concise **intent comments** (**why** not "what") at sites that
+  + mirror semantics across language, generator, parser, storage, or protocol boundaries
+  * encode mathematical meaning or invariants in ranks, ordering, masks, sentinels, packed values, or bounds
+  + rely on source-of-truth assumptions such as canonical syntax, declaration order, uniqueness, or sortedness
+  * define STL, ownership, lifetime, ABI, or serialization seams
+* Comment the invariant or reason the code is shaped this way; do not restate mechanics or narrate the current task/refactor.
 * Build the smallest meaningful batch that fulfills the contract, then verify tests pass.
 * Keep diffs scoped and reviewable.
 * Intelligence over Efficiency:

@@ -501,7 +501,7 @@ These functors form an adjunction: $A$ is left adjoint to $S$. Applying both
 in sequence recovers the original structure: $S(A(P)) \cong P$.
 
 In tagd, this adjunction is visible in the two-step construction of a fully
-hydrated tag. A tag begins as a semantic object — identity, subordinate
+populated tag. A tag begins as a semantic object — identity, subordinate
 relation, position — living in the preorder. When its rank is assigned, it
 is lifted into the Alexandrov topological space. The rank upgrade is the
 **unit of the adjunction**: the reflection morphism that moves a tag from
@@ -513,7 +513,7 @@ identity on the underlying set.
 tagd::abstract_tag semantic(id, sub_relator, super_object, pos);
 
 // Reflection map: lifts into the Alexandrov space
-tagd::abstract_tag hydrated = rank.empty()
+tagd::abstract_tag populated = rank.empty()
     ? std::move(semantic)
     : tagd::abstract_tag(semantic, rank);  // ← unit of the adjunction
 ```
@@ -601,7 +601,7 @@ constructive existence condition. No witness, no tag.
 
 After the const-correctness work (Phase 9B), this constructive character is
 enforced in the type system: tags are built once, immutably, in a single
-construction step. There is no "assert existence, hydrate later" pattern.
+construction step. There is no "assert existence, populate later" pattern.
 The construction *is* the proof of existence.
 
 ```cpp

@@ -7,7 +7,8 @@ I then want an assessment of completed tasks, relevent generated documents, and 
 
 * Archive decisions must preserve a consistent model of truth across tasks, reports, and current code.
 * Do not let historical plans, active references, completed work, and superseded documents blur together.
-* **We eat our own dogfood**: if TAGL, code, tests, and reports disagree, resolve the status by inspecting the actual truth-bearing artifacts.
+* **Consistency is key**: if code, tests, and reports disagree, resolve the status by inspecting the actual truth-bearing artifacts.
+* Report inconsistencies between task/reports and code.
 
 ## Directories
 
@@ -58,7 +59,7 @@ I wanted only **fully addressed** or **no-longer-relevant** reports in files
 
 To be moved into
 
-    TASKS.d/archive/
+    out/archive/
 
 #### Constraints
 
@@ -84,6 +85,7 @@ Treat archive movement as an epistemic operation:
 * archive only when the file's status is consistent with current code, tests, and history
 * leave active any file that still serves as a source of truth, plan, or open mission
 * mark superseded reasoning as historical rather than letting it masquerade as current guidance
+  + this is important because prompted task instructions may diverge from task file instructions - the commited code changes are the source of truth.
 
 ## Report Instructions
 
@@ -96,6 +98,6 @@ Write the `.md` report in `out/` consistent with our naming conventions.
 3. **Reduce** consolodate all content together, grouped by topic and filtered into conscise **impact statements** grouped and ordered by **topic**
 
 4. Generate markdown report of highly condensed, non-repetitive - containing sections
-1. after action report, status of the project as **impact statements by topic**
-2. well organized document of actionable intelligence of **impact statements by topic** within the context and mission of reaching project (tagd-workspace) goals while applying lessons learned.
-3. Conclude with a list of tasks to be complete as **impact statements by topic**
+  1. after action report, status of the project as **impact statements by topic**
+  2. well organized document of actionable intelligence of **impact statements by topic** within the context and mission of reaching project (tagd-workspace) goals while applying lessons learned.
+  3. Conclude with a list of tasks to be complete as **impact statements by topic**

@@ -1,7 +1,7 @@
 # Task: Phase 4 — Integration Preparation & Compatibility Layer
 
 ## Objective
-Prepare `hard-tagspace` for integration back into the main `tagd` repository by adding build support and compatibility shims.
+Prepare `../tagspace` for integration back into the main `tagd` repository by adding build support and compatibility shims.
 
 ## Requirements
 - Add `tagspace` module to the build system (update top-level Makefile).
